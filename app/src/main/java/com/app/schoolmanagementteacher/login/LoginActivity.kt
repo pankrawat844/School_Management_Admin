@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
+import com.app.schoolmanagementteacher.HomeActivity
 import com.app.schoolmanagementteacher.SplashActivity
 import com.app.schoolmanagementteacher.R
 import com.app.schoolmanagementteacher.databinding.ActivityLoginBinding
@@ -63,7 +64,7 @@ class LoginActivity : AppCompatActivity(),KodeinAware,LoginListener {
             it.putString("password", student.password)
             it.commit()
         }
-        Intent(this, SplashActivity::class.java).also {
+        Intent(this, HomeActivity::class.java).also {
             it.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
             finish()

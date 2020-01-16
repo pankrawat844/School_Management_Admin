@@ -20,7 +20,7 @@ class SplashActivity : AppCompatActivity() {
             override fun run() {
                 if (sharedPreferences.getBoolean("islogin", false)) {
 
-                        Intent(this@SplashActivity, SplashActivity::class.java).apply {
+                        Intent(this@SplashActivity, HomeActivity::class.java).apply {
                             startActivity(this)
                             finish()
                         }

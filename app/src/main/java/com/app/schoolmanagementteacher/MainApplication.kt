@@ -1,6 +1,8 @@
 package com.app.schoolmanagementteacher
 
 import android.app.Application
+import com.app.schoolmanagementteacher.home.HomeViewModel
+import com.app.schoolmanagementteacher.home.HomeViewModelFactory
 import com.app.schoolmanagementteacher.login.LoginViewmodel
 import com.app.schoolmanagementteacher.login.LoginViewmodelFactory
 import com.app.schoolmanagementteacher.network.MyApi
@@ -18,5 +20,8 @@ class MainApplication:Application(),KodeinAware {
         bind() from singleton { Repository(instance()) }
         bind() from singleton { LoginViewmodelFactory(instance()) }
         bind() from singleton { LoginViewmodel(instance()) }
+
+        bind() from singleton { HomeViewModelFactory(instance()) }
+        bind() from singleton { HomeViewModel(instance()) }
      }
 }
