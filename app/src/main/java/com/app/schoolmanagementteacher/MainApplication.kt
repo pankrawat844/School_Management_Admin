@@ -15,7 +15,6 @@ import org.kodein.di.generic.singleton
 
 class MainApplication:Application(),KodeinAware {
     override val kodein= Kodein.lazy {
-
         bind() from singleton { MyApi() }
         bind() from singleton { Repository(instance()) }
         bind() from singleton { LoginViewmodelFactory(instance()) }
