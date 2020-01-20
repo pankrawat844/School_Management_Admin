@@ -1,2 +1,3 @@
+include ':photopicker'
 include ':app'
-rootProject.name = "School Management(Teacher)"
+//rootProject.name = "SchoolManagementTeacher"

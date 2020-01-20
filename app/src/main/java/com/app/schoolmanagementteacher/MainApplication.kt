@@ -7,6 +7,8 @@ import com.app.schoolmanagementteacher.login.LoginViewmodel
 import com.app.schoolmanagementteacher.login.LoginViewmodelFactory
 import com.app.schoolmanagementteacher.network.MyApi
 import com.app.schoolmanagementteacher.network.Repository
+import com.app.schoolmanagementteacher.photopicker.loader.GlideImageLoader
+import lv.chi.photopicker.ChiliPhotoPicker
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.generic.bind
@@ -23,4 +25,12 @@ class MainApplication:Application(),KodeinAware {
         bind() from singleton { HomeViewModelFactory(instance()) }
         bind() from singleton { HomeViewModel(instance()) }
      }
+
+    override fun onCreate() {
+        super.onCreate()
+        ChiliPhotoPicker.init(
+            loader = GlideImageLoader(),
+            authority = "com.app.schoolmanagementteacher.fileprovider"
+        )
+    }
 }
