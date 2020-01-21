@@ -7,7 +7,7 @@ data class HomeworkList(
     @SerializedName("message")
     val message: String?,
     @SerializedName("response")
-    val response: List<Response?>?,
+    val response: List<Response>?=null,
     @SerializedName("success")
     val success: Boolean?
 ) {

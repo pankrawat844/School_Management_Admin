@@ -1,13 +1,17 @@
 package com.app.schoolmanagementteacher.homework
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toFile
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.schoolmanagementteacher.R
 import com.app.schoolmanagementteacher.response.Homework
+import com.app.schoolmanagementteacher.response.HomeworkList
 import com.app.schoolmanagementteacher.utils.hide
 import com.app.schoolmanagementteacher.utils.show
 import com.app.schoolmanagementteacher.utils.toast
@@ -29,11 +33,15 @@ class HomeworkActivity : AppCompatActivity(), PhotoPickerFragment.Callback, Kode
 
     val factory: HomeworkViewmodelFactory by instance()
     var viewmodel: HomeworkViewmodel? = null
+    var sharedPreferences:SharedPreferences?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_homework)
         viewmodel = ViewModelProviders.of(this, factory).get(HomeworkViewmodel::class.java)
         viewmodel?.homeworkListener = this
+        sharedPreferences=getSharedPreferences("app", Context.MODE_PRIVATE)
+
+        viewmodel?.allHomework(sharedPreferences?.getString("id","")!!)
         camera.setOnClickListener {
             PhotoPickerFragment.newInstance(
                 multiple = false,
@@ -69,9 +77,14 @@ class HomeworkActivity : AppCompatActivity(), PhotoPickerFragment.Callback, Kode
         toast(data.response!!)
     }
 
-    override fun onAllHomeworkSuccess(data: Homework) {
-
+    override fun onAllHomeworkSuccess(data: HomeworkList) {
+        Log.e("TAG", "onAllHomeworkSuccess: "+data.response.toString() )
+        val adapter=HomeworkRecyclerviewAdapter(data?.response!!)
+        recycler_view.layoutManager=LinearLayoutManager(this)
+        recycler_view.adapter=adapter
     }
+
+
 
     override fun onFailure(msg: String) {
         progress_bar.hide()

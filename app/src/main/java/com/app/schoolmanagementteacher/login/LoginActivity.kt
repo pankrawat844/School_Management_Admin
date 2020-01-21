@@ -52,16 +52,16 @@ class LoginActivity : AppCompatActivity(),KodeinAware,LoginListener {
         progress_bar.show()
     }
 
-    override fun onSuccess(student: TeacherLogin.Response) {
+    override fun onSuccess(teacher: TeacherLogin.Response) {
         progress_bar.hide()
 
         sharedPref.edit().also {
             it.putBoolean("islogin", true)
             it.putString("role", "student")
-            it.putString("name", student.userid)
+            it.putString("id", teacher.userid)
             it.putString("school_id", "")
-            it.putString("school_name", student.schoolName)
-            it.putString("password", student.password)
+            it.putString("school_name", teacher.schoolName)
+            it.putString("password", teacher.password)
             it.commit()
         }
         Intent(this, HomeActivity::class.java).also {
