@@ -37,5 +37,6 @@ class MainApplication:Application(),KodeinAware {
             loader = GlideImageLoader(),
             authority = "com.app.schoolmanagementteacher.fileprovider"
         )
+
     }
 }

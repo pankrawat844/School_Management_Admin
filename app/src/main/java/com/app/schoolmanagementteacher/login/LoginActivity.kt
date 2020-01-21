@@ -31,6 +31,9 @@ class LoginActivity : AppCompatActivity(),KodeinAware,LoginListener {
     val factory: LoginViewmodelFactory by instance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val databind: ActivityLoginBinding =
+            DataBindingUtil.setContentView(this, R.layout.activity_login)
         sharedPref = getSharedPreferences("app", Context.MODE_PRIVATE)
         val timer = Timer()
         timer.scheduleAtFixedRate(object : TimerTask() {
@@ -40,8 +43,7 @@ class LoginActivity : AppCompatActivity(),KodeinAware,LoginListener {
             }
 
         }, 100, 100)
-        val databind: ActivityLoginBinding =
-            DataBindingUtil.setContentView(this, R.layout.activity_login)
+
         viewModel = ViewModelProviders.of(this, factory).get(LoginViewmodel::class.java)
         databind.data = viewModel
 //        viewModel. = intent.getStringExtra("school_id")
@@ -57,10 +59,13 @@ class LoginActivity : AppCompatActivity(),KodeinAware,LoginListener {
 
         sharedPref.edit().also {
             it.putBoolean("islogin", true)
-            it.putString("role", "student")
-            it.putString("id", teacher.userid)
+            if(teacher.isIncharge=="1")
+            it.putString("role", "incharge")
+            else
+                it.putString("role", "teacher")
+
+            it.putString("id", teacher.id)
             it.putString("school_id", "")
-            it.putString("school_name", teacher.schoolName)
             it.putString("password", teacher.password)
             it.commit()
         }

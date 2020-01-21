@@ -3,6 +3,8 @@ package com.app.schoolmanagementteacher.response
 
 import com.google.gson.annotations.SerializedName
 
+val  TYPETXT:Int=0
+val TYPEIMG:Int=1
 data class HomeworkList(
     @SerializedName("message")
     val message: String?,
@@ -21,6 +23,8 @@ data class HomeworkList(
         @SerializedName("id")
         val id: String?,
         @SerializedName("incharge_id")
-        val inchargeId: String?
+        val inchargeId: String?,
+        @SerializedName("type")
+        val type: Int?
     )
 }

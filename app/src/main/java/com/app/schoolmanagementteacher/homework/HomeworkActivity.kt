@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toFile
 import androidx.lifecycle.ViewModelProviders
@@ -15,7 +16,9 @@ import com.app.schoolmanagementteacher.response.HomeworkList
 import com.app.schoolmanagementteacher.utils.hide
 import com.app.schoolmanagementteacher.utils.show
 import com.app.schoolmanagementteacher.utils.toast
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.activity_homework.*
+import kotlinx.android.synthetic.main.bottomsheet_homework_txt.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,7 +54,17 @@ class HomeworkActivity : AppCompatActivity(), PhotoPickerFragment.Callback, Kode
             ).show(supportFragmentManager, "YOUR_TAG")
             menu.close(true)
         }
+        val bottomSheetBehavior=BottomSheetBehavior.from(bottom_sheet_homework)
+        bottomSheetBehavior.state=BottomSheetBehavior.STATE_HIDDEN
+    txt.setOnClickListener {
+        if(bottomSheetBehavior.state==BottomSheetBehavior.STATE_HIDDEN)
+        {
+            bottomSheetBehavior.state=BottomSheetBehavior.STATE_EXPANDED
+        }
+    }
 
+        if(sharedPreferences?.getString("role","")=="incharge")
+            menu.visibility= View.VISIBLE
 
     }
 
@@ -79,6 +92,7 @@ class HomeworkActivity : AppCompatActivity(), PhotoPickerFragment.Callback, Kode
 
     override fun onAllHomeworkSuccess(data: HomeworkList) {
         Log.e("TAG", "onAllHomeworkSuccess: "+data.response.toString() )
+        progress_bar.hide()
         val adapter=HomeworkRecyclerviewAdapter(data?.response!!)
         recycler_view.layoutManager=LinearLayoutManager(this)
         recycler_view.adapter=adapter

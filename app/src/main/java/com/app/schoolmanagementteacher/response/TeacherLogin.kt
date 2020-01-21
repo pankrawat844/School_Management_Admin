@@ -7,7 +7,7 @@ data class TeacherLogin(
     @SerializedName("message")
     val message: String?,
     @SerializedName("response")
-    val response: Response?=null,
+    val response: Response?,
     @SerializedName("success")
     val success: Boolean?
 ) {
@@ -24,8 +24,6 @@ data class TeacherLogin(
         val isTeacher: String?,
         @SerializedName("password")
         val password: String?,
-        @SerializedName("school_name")
-        val schoolName: String?,
         @SerializedName("section_name")
         val sectionName: String?,
         @SerializedName("userid")

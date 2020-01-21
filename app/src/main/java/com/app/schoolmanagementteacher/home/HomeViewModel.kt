@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 
 import com.app.schoolmanagement.utils.ApiException
 import com.app.schoolmanagement.utils.NoInternetException
+import com.app.schoolmanagementteacher.attendance.AttendenceActivity
 import com.app.schoolmanagementteacher.homework.HomeworkActivity
 import com.app.schoolmanagementteacher.network.Repository
 import com.app.schoolmanagementteacher.response.Classes
@@ -42,7 +43,11 @@ class HomeViewModel(val adminRepository: Repository) : ViewModel() {
         }
     }
 
-
+    fun onAttendanceClick(view:View){
+        Intent(view.context,AttendenceActivity::class.java).also {
+            view.context.startActivity(it)
+        }
+    }
 
 
 

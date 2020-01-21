@@ -8,7 +8,6 @@ import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
@@ -37,7 +36,7 @@ interface MyApi {
 
 
     @FormUrlEncoded
-    @POST("teacher_login.php")
+    @POST("homework_list.php")
     fun all_homework(
         @Field("incharge_id") incharge_id:String
 
