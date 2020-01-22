@@ -2,6 +2,7 @@ package com.app.schoolmanagementteacher.network
 
 import com.app.schoolmanagementteacher.response.Homework
 import com.app.schoolmanagementteacher.response.HomeworkList
+import com.app.schoolmanagementteacher.response.NoticeList
 import com.app.schoolmanagementteacher.response.TeacherLogin
 import com.app.schoolmanagementteacher.utils.Constants
 import com.google.gson.GsonBuilder
@@ -51,4 +52,11 @@ interface MyApi {
         @Part img:MultipartBody.Part,
         @Part("type") type:Int=1
         ):Call<Homework>
+
+    @FormUrlEncoded
+    @POST("notice_list.php")
+    fun all_notice(
+        @Field("incharge_id") incharge_id:String
+
+    ):Call<NoticeList>
 }

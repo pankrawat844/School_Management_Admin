@@ -3,6 +3,7 @@ package com.app.schoolmanagementteacher.network
 import com.app.schoolmanagement.students.network.SafeApiRequest
 import com.app.schoolmanagementteacher.response.Homework
 import com.app.schoolmanagementteacher.response.HomeworkList
+import com.app.schoolmanagementteacher.response.NoticeList
 import com.app.schoolmanagementteacher.response.TeacherLogin
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -28,5 +29,10 @@ class Repository(val myApi: MyApi):SafeApiRequest() {
     suspend fun allHomework(incharge_id: String):Call<HomeworkList>
     {
         return  myApi.all_homework(incharge_id)
+    }
+
+    suspend fun allNotice(incharge_id: String):Call<NoticeList>
+    {
+        return  myApi.all_notice(incharge_id)
     }
 }

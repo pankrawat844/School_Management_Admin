@@ -14,6 +14,7 @@ import com.app.schoolmanagement.utils.NoInternetException
 import com.app.schoolmanagementteacher.attendance.AttendenceActivity
 import com.app.schoolmanagementteacher.homework.HomeworkActivity
 import com.app.schoolmanagementteacher.network.Repository
+import com.app.schoolmanagementteacher.notice.NoticeActivity
 import com.app.schoolmanagementteacher.response.Classes
 
 import kotlinx.coroutines.CoroutineScope
@@ -49,7 +50,11 @@ class HomeViewModel(val adminRepository: Repository) : ViewModel() {
         }
     }
 
-
+    fun onNoticeClick(view:View){
+        Intent(view.context,NoticeActivity::class.java).also {
+            view.context.startActivity(it)
+        }
+    }
 
 
 }

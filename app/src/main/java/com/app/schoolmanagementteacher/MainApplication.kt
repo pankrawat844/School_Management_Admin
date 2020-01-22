@@ -9,6 +9,8 @@ import com.app.schoolmanagementteacher.login.LoginViewmodel
 import com.app.schoolmanagementteacher.login.LoginViewmodelFactory
 import com.app.schoolmanagementteacher.network.MyApi
 import com.app.schoolmanagementteacher.network.Repository
+import com.app.schoolmanagementteacher.notice.NoticeViewmodel
+import com.app.schoolmanagementteacher.notice.NoticeViewmodelFactory
 import com.app.schoolmanagementteacher.photopicker.loader.GlideImageLoader
 import lv.chi.photopicker.ChiliPhotoPicker
 import org.kodein.di.Kodein
@@ -29,6 +31,9 @@ class MainApplication:Application(),KodeinAware {
 
         bind() from singleton { HomeworkViewmodel(instance()) }
         bind() from singleton { HomeworkViewmodelFactory(instance()) }
+
+        bind() from singleton { NoticeViewmodel(instance()) }
+        bind() from singleton { NoticeViewmodelFactory(instance()) }
      }
 
     override fun onCreate() {
