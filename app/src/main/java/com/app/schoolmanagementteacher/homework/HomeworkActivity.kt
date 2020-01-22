@@ -1,14 +1,22 @@
 package com.app.schoolmanagementteacher.homework
 
-import android.content.Context
-import android.content.SharedPreferences
+import android.app.Activity
+import android.content.*
+import android.database.Cursor
+import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.DocumentsContract
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toFile
 import androidx.lifecycle.ViewModelProviders
+import androidx.loader.content.CursorLoader
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.schoolmanagementteacher.R
 import com.app.schoolmanagementteacher.response.Homework
@@ -29,6 +37,9 @@ import okhttp3.RequestBody
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
+import java.io.ByteArrayOutputStream
+import java.io.File
+
 
 class HomeworkActivity : AppCompatActivity(), PhotoPickerFragment.Callback, KodeinAware,
     HomeworkListener {
@@ -68,11 +79,35 @@ class HomeworkActivity : AppCompatActivity(), PhotoPickerFragment.Callback, Kode
 
     }
 
-    override fun onImagesPicked(photos: ArrayList<Uri>) {
-        Log.e("TAG", "onImagesPicked: " + photos[0].path)
-        val path: RequestBody = RequestBody.create(MediaType.parse("multipart/form-data"), photos[0].path)
+
+
+    fun  getImageUri( inContext:Context,  inImage:Bitmap):Uri {
+    val bytes =  ByteArrayOutputStream();
+    inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+    val path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+    return Uri.parse(path);
+}
+
+    override fun onImagesPicked(photos: ArrayList<Uri>, data: Intent?) {
+        val bitmap:Bitmap=data?.extras?.get("data") as Bitmap
+        val tempuri:Uri=getImageUri(this,bitmap)
+        val path = RequestBody.create(MediaType.parse("multipart/form-data"), File(getRealPathFromURI(tempuri)))
         val body: MultipartBody.Part = MultipartBody.Part.createFormData("fileToUpload", photos[0].toFile().name, path)
-        val incharge_id: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "1")
+        val incharge_id: RequestBody = RequestBody.create(MediaType.parse("text/plain"), sharedPreferences?.getString("id","")!!)
+        val date: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "date")
+        val txt: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "txt")
+        CoroutineScope(Dispatchers.Main).launch {
+            viewmodel?.uploadimg(incharge_id!!, date, txt, body)
+        }
+    }
+    @RequiresApi(Build.VERSION_CODES.KITKAT)
+    override fun onImagesPicked(photos: ArrayList<Uri>) {
+        Log.e("TAG", "onImagesPicked: " + photos[0])
+        var path:RequestBody?=null
+
+       path = RequestBody.create(MediaType.parse("multipart/form-data"), File(photos[0].path))
+        val body: MultipartBody.Part = MultipartBody.Part.createFormData("fileToUpload", photos[0].toFile().name, path)
+        val incharge_id: RequestBody = RequestBody.create(MediaType.parse("text/plain"), sharedPreferences?.getString("id","")!!)
         val date: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "date")
         val txt: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "txt")
         CoroutineScope(Dispatchers.Main).launch {
@@ -106,5 +141,16 @@ class HomeworkActivity : AppCompatActivity(), PhotoPickerFragment.Callback, Kode
 
     }
 
-
-}
+ fun getRealPathFromURI( uri:Uri):String{
+    var path = "";
+    if (contentResolver != null) {
+        val  cursor = contentResolver.query(uri, null, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            val idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            path = cursor.getString(idx);
+            cursor.close();
+        }
+    }
+    return path;
+}}

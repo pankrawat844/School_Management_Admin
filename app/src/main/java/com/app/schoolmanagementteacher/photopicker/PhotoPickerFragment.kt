@@ -160,7 +160,7 @@ class PhotoPickerFragment : DialogFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            Request.ADD_PHOTO_GALLERY, Request.ADD_PHOTO_CAMERA -> {
+            Request.ADD_PHOTO_GALLERY -> {
                 if (resultCode == Activity.RESULT_OK) {
                     Intents.getUriResult(data)?.let {
                         parentAs<Callback>()?.onImagesPicked(it)
@@ -168,6 +168,13 @@ class PhotoPickerFragment : DialogFragment() {
                     }
                 }
             }
+            Request.ADD_PHOTO_CAMERA->
+                if (resultCode == Activity.RESULT_OK) {
+                    Intents.getUriResult(data)?.let {
+                        parentAs<Callback>()?.onImagesPicked(it,data)
+                        dismiss()
+                    }
+                }
             else -> super.onActivityResult(requestCode, resultCode, data)
         }
     }
@@ -328,6 +335,8 @@ class PhotoPickerFragment : DialogFragment() {
 
     interface Callback {
         fun onImagesPicked(photos: ArrayList<Uri>)
+        fun onImagesPicked(photos: ArrayList<Uri>,data: Intent?)
+
     }
 
     companion object {

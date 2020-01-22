@@ -48,6 +48,7 @@ interface MyApi {
         @Part("incharge_id") incharge_id: RequestBody,
         @Part("date") date:RequestBody,
         @Part("homework_txt") homework_txt:RequestBody,
-        @Part img:MultipartBody.Part
-    ):Call<Homework>
+        @Part img:MultipartBody.Part,
+        @Part("type") type:Int=1
+        ):Call<Homework>
 }
