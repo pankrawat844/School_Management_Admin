@@ -1,6 +1,8 @@
 package com.app.schoolmanagementteacher
 
 import android.app.Application
+import com.app.schoolmanagementteacher.attendance.AttendenceViewmodel
+import com.app.schoolmanagementteacher.attendance.AttendenceViewmodelFactory
 import com.app.schoolmanagementteacher.home.HomeViewModel
 import com.app.schoolmanagementteacher.home.HomeViewModelFactory
 import com.app.schoolmanagementteacher.homework.HomeworkViewmodel
@@ -34,6 +36,9 @@ class MainApplication:Application(),KodeinAware {
 
         bind() from singleton { NoticeViewmodel(instance()) }
         bind() from singleton { NoticeViewmodelFactory(instance()) }
+
+        bind() from singleton { AttendenceViewmodelFactory(instance()) }
+        bind() from singleton { AttendenceViewmodel(instance()) }
      }
 
     override fun onCreate() {

@@ -15,9 +15,7 @@ import com.squareup.picasso.Picasso
 
 class HomeworkRecyclerviewAdapter(val list:List<HomeworkList.Response>):RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    class Viewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    }
     companion object
     {
         private const val TYPE_TXT = 0

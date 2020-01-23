@@ -1,9 +1,6 @@
 package com.app.schoolmanagementteacher.network
 
-import com.app.schoolmanagementteacher.response.Homework
-import com.app.schoolmanagementteacher.response.HomeworkList
-import com.app.schoolmanagementteacher.response.NoticeList
-import com.app.schoolmanagementteacher.response.TeacherLogin
+import com.app.schoolmanagementteacher.response.*
 import com.app.schoolmanagementteacher.utils.Constants
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
@@ -59,4 +56,13 @@ interface MyApi {
         @Field("incharge_id") incharge_id:String
 
     ):Call<NoticeList>
+
+    @FormUrlEncoded
+    @POST("student_list.php")
+    fun all_student(
+        @Field("class_name") class_name:String,
+        @Field("section_name") section_name:String
+
+
+    ):Call<StudentList>
 }

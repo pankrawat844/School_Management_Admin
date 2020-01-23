@@ -66,6 +66,8 @@ class LoginActivity : AppCompatActivity(),KodeinAware,LoginListener {
 
             it.putString("id", teacher.id)
             it.putString("school_id", "")
+            it.putString("class_name", teacher.className)
+            it.putString("section_name", teacher.sectionName)
             it.putString("password", teacher.password)
             it.commit()
         }

@@ -1,5 +1,6 @@
 package com.app.schoolmanagementteacher.attendance
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import android.widget.Toolbar
@@ -21,7 +22,10 @@ class AttendenceActivity : AppCompatActivity() {
 
        calenderview.setOnDayClickListener(object :OnDayClickListener{
            override fun onDayClick(eventDay: EventDay) {
-               toast(eventDay.calendar.time.toString())
+//               toast(eventDay.calendar.time.toString())
+           Intent(this@AttendenceActivity,StudentListActivity::class.java).also {
+               startActivity(it)
+           }
            }
 
        })
