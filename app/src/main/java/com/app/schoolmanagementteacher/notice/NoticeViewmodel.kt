@@ -22,13 +22,13 @@ import retrofit2.http.Part
 class NoticeViewmodel(val repository: Repository):ViewModel() {
         var noticeListener:NoticeListener?=null
 
-    suspend fun uploadimg( @Part("incharge_id") incharge_id:RequestBody,
-                           @Part("date") date:RequestBody,
-                           @Part("homework_txt") homework_txt:RequestBody,
-                            img:MultipartBody.Part)
+    suspend fun addNotice( incharge_id:String,
+                           title:String,
+                           notice:String
+                          )
     {
         noticeListener?.onStarted()
-        repository.sendHomework(incharge_id,date, homework_txt, img).enqueue(object :Callback<Homework>{
+        repository.addNotice(incharge_id,title,notice).enqueue(object :Callback<Homework>{
             override fun onFailure(call: Call<Homework>, t: Throwable) {
                 Log.e("homeviewmodel", "onFailure: "+t.message);
                 noticeListener?.onFailure(t.message!!)

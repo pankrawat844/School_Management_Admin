@@ -54,6 +54,14 @@ interface MyApi {
         ):Call<Homework>
 
     @FormUrlEncoded
+    @POST("add_notice.php")
+    fun add_notice(
+        @Field("incharge_id") incharge_id:String,
+        @Field("title") title:String,
+        @Field("notice") notice:String
+    ):Call<Homework>
+
+    @FormUrlEncoded
     @POST("notice_list.php")
     fun all_notice(
         @Field("incharge_id") incharge_id:String

@@ -13,12 +13,17 @@ import com.app.schoolmanagementteacher.databinding.ActivityNoticeBinding
 import com.app.schoolmanagementteacher.response.Homework
 import com.app.schoolmanagementteacher.response.HomeworkList
 import com.app.schoolmanagementteacher.response.NoticeList
+import com.app.schoolmanagementteacher.utils.hide
+import com.app.schoolmanagementteacher.utils.show
 import com.app.schoolmanagementteacher.utils.toast
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_notice.*
 import kotlinx.android.synthetic.main.bottomsheet_notice.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
@@ -34,6 +39,7 @@ class NoticeActivity : AppCompatActivity(),KodeinAware,NoticeListener {
         val viewmodel=ViewModelProviders.of(this,factory).get(NoticeViewmodel::class.java)
         sharedPreferences=getSharedPreferences("app", Context.MODE_PRIVATE)
         viewmodel.noticeListener=this
+        databinding.viewmodel=viewmodel
         viewmodel.allNotice(sharedPreferences?.getString("id","")!!)
         val bottomSheetBehavior=BottomSheetBehavior.from(bottom_sheet_notice)
         bottomSheetBehavior.state=BottomSheetBehavior.STATE_HIDDEN
@@ -41,16 +47,25 @@ class NoticeActivity : AppCompatActivity(),KodeinAware,NoticeListener {
             if(bottomSheetBehavior.state==BottomSheetBehavior.STATE_HIDDEN)
             bottomSheetBehavior.state=BottomSheetBehavior.STATE_EXPANDED
         }
+        bottom_sheet_nxt.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                if(titl.text.toString().isNullOrEmpty() || notice.text.toString().isNullOrEmpty())
+                    toast("Both field is mandatory.")
+                else
+                viewmodel.addNotice(sharedPreferences?.getString("id", "")!!, titl.text.toString(),notice.text.toString())
+            }
+        }
     }
 
     override fun onStarted() {
-
+    progress_bar.show()
     }
 
     override fun onSuccess(data: Homework) {
     }
 
     override fun onAllNoticeSuccess(data: NoticeList) {
+        progress_bar.hide()
         Log.e("TAG", "onAllNoticeSuccess: "+data.response);
         initRecyerview(data!!.response?.toNoticeItem()!!)
     }
@@ -69,6 +84,7 @@ class NoticeActivity : AppCompatActivity(),KodeinAware,NoticeListener {
     }
 
     override fun onFailure(msg: String) {
+        progress_bar.hide()
         toast(msg)
     }
 

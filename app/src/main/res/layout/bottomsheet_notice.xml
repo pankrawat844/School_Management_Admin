@@ -38,7 +38,7 @@
         app:layout_constraintTop_toBottomOf="@+id/filter">
 
         <EditText
-            android:id="@+id/spinner_car_type"
+            android:id="@+id/titl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/rect_filter"
@@ -73,7 +73,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/filter_rating">
         <EditText
-            android:id="@+id/spinner_sort_by"
+            android:id="@+id/notice"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:background="@drawable/rect_filter"
@@ -84,7 +84,7 @@
 
 
     <Button
-        android:id="@+id/bottom_sheet_filter_nxt"
+        android:id="@+id/bottom_sheet_nxt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
