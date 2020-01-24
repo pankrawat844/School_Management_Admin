@@ -1,10 +1,7 @@
 package com.app.schoolmanagementteacher.network
 
 import com.app.schoolmanagement.students.network.SafeApiRequest
-import com.app.schoolmanagementteacher.response.Homework
-import com.app.schoolmanagementteacher.response.HomeworkList
-import com.app.schoolmanagementteacher.response.NoticeList
-import com.app.schoolmanagementteacher.response.TeacherLogin
+import com.app.schoolmanagementteacher.response.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -41,6 +38,11 @@ class Repository(val myApi: MyApi):SafeApiRequest() {
     suspend fun allNotice(incharge_id: String):Call<NoticeList>
     {
         return  myApi.all_notice(incharge_id)
+    }
+
+    suspend fun allStudent(class_name: String,section_name: String):Call<StudentList>
+    {
+        return  myApi.all_student(class_name!!,section_name!!)
     }
 
 
