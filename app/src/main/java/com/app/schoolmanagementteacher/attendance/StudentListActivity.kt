@@ -3,8 +3,6 @@ package com.app.schoolmanagementteacher.attendance
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
-import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
@@ -12,48 +10,75 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.schoolmanagementteacher.R
 import com.app.schoolmanagementteacher.databinding.ActivityStudentListBinding
+import com.app.schoolmanagementteacher.response.CheckAttendence
 import com.app.schoolmanagementteacher.response.Homework
 import com.app.schoolmanagementteacher.response.StudentList
 import com.app.schoolmanagementteacher.utils.hide
 import com.app.schoolmanagementteacher.utils.show
 import com.app.schoolmanagementteacher.utils.toast
 import kotlinx.android.synthetic.main.activity_student_list.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.json.JSONArray
+import org.json.JSONObject
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
 
-class StudentListActivity : AppCompatActivity(), KodeinAware, AttendenceListener,OnOptionSelected {
+class StudentListActivity : AppCompatActivity(), KodeinAware, AttendenceListener, OnOptionSelected {
 
 
     override val kodein by kodein()
     val factory: AttendenceViewmodelFactory by instance()
     lateinit var sharedPreferences: SharedPreferences
-    lateinit var linearLayoutManager:LinearLayoutManager
-    var list:List<StudentList.Response>?= arrayListOf()
+    lateinit var linearLayoutManager: LinearLayoutManager
+    var list: List<StudentList.Response>? = arrayListOf()
+    lateinit var viewmodel: AttendenceViewmodel
+    var attendenceData: CheckAttendence? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val databinding: ActivityStudentListBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_student_list)
-        val viewmodel = ViewModelProviders.of(this, factory).get(AttendenceViewmodel::class.java)
-        linearLayoutManager=LinearLayoutManager(this)
+        viewmodel = ViewModelProviders.of(this, factory).get(AttendenceViewmodel::class.java)
+        linearLayoutManager = LinearLayoutManager(this)
         sharedPreferences = getSharedPreferences("app", Context.MODE_PRIVATE)
         viewmodel.attedenceListener = this
-        viewmodel.allstudent(
-            sharedPreferences.getString("class_name", "")!!,
-            sharedPreferences.getString("section_name", "")!!
-        )
+        CoroutineScope(Dispatchers.Main).launch {
+            viewmodel.check_attendence(
+                intent.getStringExtra("date"),
+                sharedPreferences.getString("class_name", "")!!,
+                sharedPreferences.getString("section_name", "")!!
+            )
+        }
+
 
         submit.setOnClickListener {
-//
-
-
-            for (i in list!!)
-            {
+            //            for (i in list!!)
+//            {
 //                val holder = recycler_view.findViewHolderForAdapterPosition(i) as RecyclerView.ViewHolder
-                                Log.e("TAG", "initRecyerview: "+i.attendence )
-
+//                                Log.e("TAG", "initRecyerview: "+i.attendence )
+            val jsonArray = JSONArray()
+            for (j in list!!) {
+                if (j.attendence != null) {
+                    val jsonObject = JSONObject()
+                    jsonObject.put("name", j.name)
+                    jsonObject.put("id", j.rollNo)
+                    jsonObject.put("attendence", j.attendence)
+                    jsonArray.put(jsonObject)
+                }
             }
+
+            CoroutineScope(Dispatchers.Main).launch {
+                viewmodel.add_attendence(
+                    intent.getStringExtra("date"),
+                    sharedPreferences.getString("class_name", "")!!,
+                    sharedPreferences.getString("section_name", "")!!,
+                    jsonArray.toString()
+                )
+            }
+//            }
         }
     }
 
@@ -62,11 +87,31 @@ class StudentListActivity : AppCompatActivity(), KodeinAware, AttendenceListener
     }
 
     override fun onSuccess(data: Homework) {
+        progress_bar.hide()
+        finish()
+        toast(data.response!!)
     }
 
     override fun onAllStudentSuccess(data: StudentList) {
         progress_bar.hide()
         initRecyerview(data.response!!)
+    }
+
+    override fun onCheckAttendence(data: CheckAttendence) {
+        if (data.success!!) {
+            attendenceData = data
+        }
+        viewmodel.allstudent(
+            sharedPreferences.getString("class_name", "")!!,
+            sharedPreferences.getString("section_name", "")!!
+        )
+    }
+
+    override fun onCheckAttendenceFailour(msg: String) {
+        viewmodel.allstudent(
+            sharedPreferences.getString("class_name", "")!!,
+            sharedPreferences.getString("section_name", "")!!
+        )
     }
 
     override fun onFailure(msg: String) {
@@ -75,9 +120,9 @@ class StudentListActivity : AppCompatActivity(), KodeinAware, AttendenceListener
     }
 
     private fun initRecyerview(toNoticeItem: List<StudentList.Response>) {
-        list=toNoticeItem
-        val adapter =StudentAdapter(toNoticeItem)
-        adapter.optionSelected=this
+        list = toNoticeItem
+        val adapter = StudentAdapter(toNoticeItem)
+        adapter.optionSelected = this
         recycler_view.apply {
             layoutManager = linearLayoutManager
             setAdapter(adapter)
@@ -89,6 +134,7 @@ class StudentListActivity : AppCompatActivity(), KodeinAware, AttendenceListener
 
 
     }
+
     fun RecyclerView.setMaxViewPoolSize(maxViewTypeId: Int, maxPoolSize: Int) {
         for (i in 0..maxViewTypeId)
             recycledViewPool.setMaxRecycledViews(i, maxPoolSize)
@@ -102,6 +148,6 @@ class StudentListActivity : AppCompatActivity(), KodeinAware, AttendenceListener
 
     override fun onOptionSelected(position: Int, itemSelected: String) {
 
-        list?.get(position)?.attendence =itemSelected
+        list?.get(position)?.attendence = itemSelected
     }
 }

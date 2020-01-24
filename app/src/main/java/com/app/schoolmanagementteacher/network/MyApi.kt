@@ -63,14 +63,31 @@ interface MyApi {
     fun all_notice(
         @Field("incharge_id") incharge_id:String
 
-    ):Call<NoticeList>
+    ): Call<NoticeList>
 
     @FormUrlEncoded
     @POST("student_list.php")
     fun all_student(
-        @Field("class_name") class_name:String,
-        @Field("section_name") section_name:String
+        @Field("class_name") class_name: String,
+        @Field("section_name") section_name: String
 
 
-    ):Call<StudentList>
+    ): Call<StudentList>
+
+    @FormUrlEncoded
+    @POST("attendence.php")
+    fun add_attendence(
+        @Field("date") date: String,
+        @Field("class_name") class_id: String,
+        @Field("section_name") notice: String,
+        @Field("attendence") attendence: String
+    ): Call<Homework>
+
+    @FormUrlEncoded
+    @POST("check_attendence.php")
+    fun check_attendence(
+        @Field("date") date: String,
+        @Field("class_name") class_id: String,
+        @Field("section_name") notice: String
+    ): Call<CheckAttendence>
 }

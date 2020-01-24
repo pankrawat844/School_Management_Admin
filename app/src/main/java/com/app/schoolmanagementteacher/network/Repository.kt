@@ -35,15 +35,28 @@ class Repository(val myApi: MyApi):SafeApiRequest() {
         return  myApi.add_notice(incharge_id, title,notice)
     }
 
-    suspend fun allNotice(incharge_id: String):Call<NoticeList>
-    {
-        return  myApi.all_notice(incharge_id)
+    suspend fun allNotice(incharge_id: String): Call<NoticeList> {
+        return myApi.all_notice(incharge_id)
     }
 
-    suspend fun allStudent(class_name: String,section_name: String):Call<StudentList>
-    {
-        return  myApi.all_student(class_name!!,section_name!!)
+    suspend fun allStudent(class_name: String, section_name: String): Call<StudentList> {
+        return myApi.all_student(class_name, section_name)
     }
 
+    suspend fun addAttendence(
+        class_name: String,
+        section_name: String,
+        date: String,
+        attendence: String
+    ): Call<Homework> {
+        return myApi.add_attendence(date, class_name, section_name, attendence)
+    }
 
+    suspend fun checkAttendence(
+        class_name: String,
+        section_name: String,
+        date: String
+    ): Call<CheckAttendence> {
+        return myApi.check_attendence(date, class_name, section_name)
+    }
 }

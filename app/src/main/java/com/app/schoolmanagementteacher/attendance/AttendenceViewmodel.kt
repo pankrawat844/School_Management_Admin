@@ -3,42 +3,47 @@ package com.app.schoolmanagementteacher.attendance
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.app.schoolmanagementteacher.network.Repository
+import com.app.schoolmanagementteacher.response.CheckAttendence
 import com.app.schoolmanagementteacher.response.Homework
-import com.app.schoolmanagementteacher.response.NoticeList
 import com.app.schoolmanagementteacher.response.StudentList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.http.Part
 
 class AttendenceViewmodel(val repository: Repository):ViewModel() {
     var attedenceListener: AttendenceListener? = null
 
-    suspend fun uploadimg(
-        @Part("incharge_id") incharge_id: RequestBody,
-        @Part("date") date: RequestBody,
-        @Part("homework_txt") homework_txt: RequestBody,
-        img: MultipartBody.Part
+    suspend fun add_attendence(
+        date: String,
+        class_name: String,
+        section_name: String,
+        attendence: String
     ) {
         attedenceListener?.onStarted()
-        repository.sendHomework(incharge_id, date, homework_txt, img).enqueue(object :
+        repository.addAttendence(class_name, section_name, date, attendence).enqueue(object :
             Callback<Homework> {
             override fun onFailure(call: Call<Homework>, t: Throwable) {
-                Log.e("homeviewmodel", "onFailure: " + t.message);
+                Log.e("homeviewmodel", "onFailure: " + t.message)
                 attedenceListener?.onFailure(t.message!!)
 
             }
 
             override fun onResponse(call: Call<Homework>, response: Response<Homework>) {
-                Log.e("homeviewmodel", "onsuccess: " + response.body()!!.response);
-                attedenceListener?.onSuccess(response.body()!!)
+                if (response.isSuccessful) {
+                    Log.e("homeviewmodel", "onsuccess: " + response.body()!!.response)
+                    attedenceListener?.onSuccess(response.body()!!)
+                } else {
+                    attedenceListener?.onFailure(
+                        JSONObject(response.errorBody()?.string()).getString(
+                            "response"
+                        )
+                    )
 
+                }
             }
 
         })
@@ -58,7 +63,7 @@ class AttendenceViewmodel(val repository: Repository):ViewModel() {
                     response: Response<StudentList>
                 ) {
                     if (response.isSuccessful)
-                        attedenceListener?.onAllStudentSuccess(response?.body()!!)
+                        attedenceListener?.onAllStudentSuccess(response.body()!!)
                     else
                         attedenceListener?.onFailure(
                             JSONObject(response.errorBody()?.string()).getString(
@@ -70,5 +75,41 @@ class AttendenceViewmodel(val repository: Repository):ViewModel() {
 
             })
         }
+    }
+
+
+    suspend fun check_attendence(
+        date: String,
+        class_name: String,
+        section_name: String
+    ) {
+        attedenceListener?.onStarted()
+        repository.checkAttendence(class_name, section_name, date).enqueue(object :
+            Callback<CheckAttendence> {
+            override fun onFailure(call: Call<CheckAttendence>, t: Throwable) {
+                Log.e("homeviewmodel", "onFailure: " + t.message)
+                attedenceListener?.onCheckAttendenceFailour(t.message!!)
+
+            }
+
+            override fun onResponse(
+                call: Call<CheckAttendence>,
+                response: Response<CheckAttendence>
+            ) {
+                if (response.isSuccessful) {
+                    Log.e("homeviewmodel", "onsuccess: " + response.body()!!.response)
+                    attedenceListener?.onCheckAttendence(response.body()!!)
+                } else {
+                    attedenceListener?.onCheckAttendenceFailour(
+                        JSONObject(response.errorBody()?.string()).getString(
+                            "response"
+                        )
+                    )
+
+                }
+            }
+
+        })
+
     }
 }

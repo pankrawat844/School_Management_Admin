@@ -2,15 +2,11 @@ package com.app.schoolmanagementteacher.attendance
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
-import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import com.app.schoolmanagementteacher.R
-import com.app.schoolmanagementteacher.utils.toast
 import com.applandeo.materialcalendarview.EventDay
 import com.applandeo.materialcalendarview.listeners.OnDayClickListener
 import kotlinx.android.synthetic.main.activity_attendence.*
-import java.text.DateFormatSymbols
 import java.util.*
 
 class AttendenceActivity : AppCompatActivity() {
@@ -24,6 +20,14 @@ class AttendenceActivity : AppCompatActivity() {
            override fun onDayClick(eventDay: EventDay) {
 //               toast(eventDay.calendar.time.toString())
            Intent(this@AttendenceActivity,StudentListActivity::class.java).also {
+               val date = Calendar.getInstance()
+               date.time = eventDay.calendar.time
+               it.putExtra(
+                   "date",
+                   "" + date.get(Calendar.DATE) + "/" + date.get(Calendar.MONTH) + 1 + "/" + date.get(
+                       Calendar.YEAR
+                   )
+               )
                startActivity(it)
            }
            }
