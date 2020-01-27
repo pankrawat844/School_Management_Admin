@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.app.schoolmanagementteacher.R
 import com.app.schoolmanagementteacher.databinding.ActivityStudentListBinding
 import com.app.schoolmanagementteacher.response.CheckAttendence
@@ -98,13 +97,13 @@ class StudentListActivity : AppCompatActivity(), KodeinAware, AttendenceListener
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun onAllStudentSuccess(data: StudentList) {
         progress_bar.hide()
-        if(attendenceData?.response?.attendence!=null) {
-            val jsonArray = JSONArray(attendenceData?.response?.attendence)
-            for (i in 0 until jsonArray.length()) {
-                val jsonObject = jsonArray.getJSONObject(i)
+        if (attendenceData?.response != null) {
+
+            for (i in 0 until attendenceData?.response!!.size) {
+                val jsonObject = attendenceData?.response!![i]
                 for (j in data.response!!) {
-                    if (jsonObject.getString("roll_no") == j.rollNo) {
-                        j.attendence = jsonObject.getString("attendence")
+                    if (jsonObject?.rollNo == j.rollNo) {
+                        j.attendence = jsonObject?.attendence
                     }
                 }
             }

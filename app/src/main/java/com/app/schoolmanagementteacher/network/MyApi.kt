@@ -122,4 +122,13 @@ interface MyApi {
         @Field("class_name") class_id: String,
         @Field("section_name") notice: String
     ): Call<CheckAttendence>
+
+    @Multipart
+    @POST("time_table.php")
+    fun upload_timetable(
+        @Part("class_name") class_name: RequestBody,
+        @Part("section_name") section_name: RequestBody,
+        @Part img: MultipartBody.Part,
+        @Part("type") type: Int = 1
+    ): Call<Homework>
 }

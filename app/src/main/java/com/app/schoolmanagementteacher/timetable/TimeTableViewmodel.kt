@@ -14,27 +14,26 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.http.Part
 
 class TimeTableViewmodel(val repository: Repository):ViewModel() {
-    var timetableListener: TimeTableListener?=null
+    var timetableListener: TimeTableListener? = null
 
-    suspend fun uploadimg(@Part("incharge_id") incharge_id: RequestBody,
-                          @Part("date") date: RequestBody,
-                          @Part("homework_txt") homework_txt: RequestBody,
-                          img: MultipartBody.Part)
-    {
+    suspend fun upload(
+        class_name: RequestBody,
+        section_name: RequestBody,
+        img: MultipartBody.Part
+    ) {
         timetableListener?.onStarted()
-        repository.sendHomework(incharge_id,date, homework_txt, img).enqueue(object :
+        repository.uploadTimetable(class_name, section_name, img).enqueue(object :
             Callback<Homework> {
             override fun onFailure(call: Call<Homework>, t: Throwable) {
-                Log.e("homeviewmodel", "onFailure: "+t.message);
+                Log.e("homeviewmodel", "onFailure: " + t.message)
                 timetableListener?.onFailure(t.message!!)
 
             }
 
             override fun onResponse(call: Call<Homework>, response: Response<Homework>) {
-                if(response.isSuccessful) {
+                if (response.isSuccessful) {
                     Log.e("homeviewmodel", "onsuccess: " + response.body()!!.response)
                     timetableListener?.onImageSuccess(response.body()!!)
                 }else

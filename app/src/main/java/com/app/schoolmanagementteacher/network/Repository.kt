@@ -79,4 +79,13 @@ class Repository(val myApi: MyApi):SafeApiRequest() {
     ): Call<CheckAttendence> {
         return myApi.check_attendence(date, class_name, section_name)
     }
+
+
+    suspend fun uploadTimetable(
+        @Part("class_name") class_id: RequestBody,
+        @Part("section_name") section_name: RequestBody,
+        img: MultipartBody.Part
+    ): Call<Homework> {
+        return myApi.upload_timetable(class_id, section_name, img)
+    }
 }
