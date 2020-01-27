@@ -102,7 +102,7 @@ class AttendenceViewmodel(val repository: Repository):ViewModel() {
                 } else {
                     attedenceListener?.onCheckAttendenceFailour(
                         JSONObject(response.errorBody()?.string()).getString(
-                            "response"
+                            "message"
                         )
                     )
 

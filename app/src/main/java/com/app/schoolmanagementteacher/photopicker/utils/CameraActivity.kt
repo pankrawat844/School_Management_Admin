@@ -1,4 +1,4 @@
-package lv.chi.photopicker.utils
+ package lv.chi.photopicker.utils
 
 import android.Manifest
 import android.content.Context
@@ -7,11 +7,19 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import com.annimon.stream.operator.IntArray
+import com.app.schoolmanagementteacher.BuildConfig
+import com.app.schoolmanagementteacher.utils.toast
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 internal class CameraActivity : AppCompatActivity() {
 
@@ -26,7 +34,11 @@ internal class CameraActivity : AppCompatActivity() {
         } else permissionGranted = true
 
         if (savedInstanceState == null) {
-            output = provideImageUri()
+//            val image =
+//                File(appFolderCheckandCreate(), "img" + getTimeStamp() + ".jpg")
+//            output = Uri.fromFile(image)
+//            output = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider",image);
+            output=provideImageUri()
             if (permissionGranted) requestImageCapture()
             else {
                 ActivityCompat.requestPermissions(
@@ -55,7 +67,7 @@ internal class CameraActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
-        grantResults: IntArray
+        grantResults: kotlin.IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == Request.CAMERA_ACCESS_PERMISSION && hasCameraPermission()) {
@@ -106,5 +118,29 @@ internal class CameraActivity : AppCompatActivity() {
 
     companion object {
         fun createIntent(context: Context) = Intent(context, CameraActivity::class.java)
+    }
+
+
+    private fun appFolderCheckandCreate(): String? {
+        var appFolderPath = ""
+        val externalStorage: File = Environment.getExternalStorageDirectory()
+        if (externalStorage.canWrite()) {
+            appFolderPath = externalStorage.absolutePath + "/SchoolManagementTeacher"
+            val dir = File(appFolderPath)
+            if (!dir.exists()) {
+                dir.mkdirs()
+            }
+        } else {
+            toast("  Storage media not found or is full ! ")
+        }
+        return appFolderPath
+    }
+
+
+    private fun getTimeStamp(): String? {
+        val timestamp: Long = Date().getTime()
+        val cal: Calendar = Calendar.getInstance()
+        cal.setTimeInMillis(timestamp)
+        return SimpleDateFormat("HH_mm_ss_SSS").format(cal.getTime())
     }
 }

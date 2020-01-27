@@ -24,7 +24,7 @@ class AttendenceActivity : AppCompatActivity() {
                date.time = eventDay.calendar.time
                it.putExtra(
                    "date",
-                   "" + date.get(Calendar.DATE) + "/" + date.get(Calendar.MONTH) + 1 + "/" + date.get(
+                   "" + date.get(Calendar.DATE) + "/" + date.get(Calendar.MONTH).plus(1 )+ "/" + date.get(
                        Calendar.YEAR
                    )
                )

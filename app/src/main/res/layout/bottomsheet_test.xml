@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/bottom_sheet_notice"
+    android:id="@+id/bottom_sheet_test"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="20dp"
-        android:text="Add Notice"
+        android:text="Add Test"
         android:textColor="#000"
         android:textSize="17sp"
         android:fontFamily="@font/maven_pro_bold"
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="20dp"
-        android:text="Title"
+        android:text="Name"
         android:textColor="#9b9b9b"
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -54,7 +54,7 @@
         app:layout_constraintTop_toBottomOf="@+id/filter">
 
         <EditText
-            android:id="@+id/titl"
+            android:id="@+id/name"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/rect_filter"
@@ -70,16 +70,15 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="20dp"
-        android:text="Notice"
+        android:text="Date"
         android:textColor="#9b9b9b"
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linear_car_type" />
-
     <LinearLayout
-        android:id="@+id/linear_rating"
+        android:id="@+id/linear_date"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
@@ -87,19 +86,48 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filter_rating">
-        <EditText
-            android:id="@+id/notice_txt"
+        app:layout_constraintTop_toBottomOf="@+id/filter_rating"
+        >
+
+        <TextView
+            android:id="@+id/date"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@drawable/rect_filter"
+            android:layout_height="match_parent"
             android:text=""
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            android:gravity="center_vertical"
+            android:background="@drawable/rect_filter"
             />
+
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/info_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:text="Info"
+        android:textColor="#9b9b9b"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linear_date" />
 
 
-
+    <EditText
+        android:id="@+id/info"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text=""
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/rect_filter"
+        app:layout_constraintTop_toBottomOf="@+id/info_txt"
+        />
     <Button
         android:id="@+id/bottom_sheet_nxt"
         android:layout_width="match_parent"
@@ -109,5 +137,10 @@
         android:padding="0dp"
         android:text="Next"
         android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@+id/linear_rating" />
+        app:layout_constraintTop_toBottomOf="@+id/info" />
+    <TextView
+        android:id="@+id/id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

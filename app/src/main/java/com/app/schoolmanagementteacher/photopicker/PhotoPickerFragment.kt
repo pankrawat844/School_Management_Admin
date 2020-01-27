@@ -265,6 +265,11 @@ class PhotoPickerFragment : DialogFragment() {
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
                 Request.MEDIA_ACCESS_PERMISSION
             )
+        if (!isPermissionGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+            requestPermissions(
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                Request.MEDIA_ACCESS_PERMISSION
+            )
     }
 
     private fun updateState() {

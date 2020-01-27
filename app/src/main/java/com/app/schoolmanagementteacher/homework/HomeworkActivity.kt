@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.*
 import android.database.Cursor
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -32,13 +33,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import lv.chi.photopicker.PhotoPickerFragment
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class HomeworkActivity : AppCompatActivity(), PhotoPickerFragment.Callback, KodeinAware,
@@ -89,13 +96,15 @@ class HomeworkActivity : AppCompatActivity(), PhotoPickerFragment.Callback, Kode
 }
 
     override fun onImagesPicked(photos: ArrayList<Uri>, data: Intent?) {
-        val bitmap:Bitmap=data?.extras?.get("data") as Bitmap
-        val tempuri:Uri=getImageUri(this,bitmap)
-        val path = RequestBody.create(MediaType.parse("multipart/form-data"), File(getRealPathFromURI(tempuri)))
-        val body: MultipartBody.Part = MultipartBody.Part.createFormData("fileToUpload", photos[0].toFile().name, path)
-        val incharge_id: RequestBody = RequestBody.create(MediaType.parse("text/plain"), sharedPreferences?.getString("id","")!!)
-        val date: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "date")
-        val txt: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "txt")
+        Log.e("TAG", "onImagesPicked: "+photos[0])
+
+       val bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(photos[0]))
+        toast("OnActivityResult"+bitmap.toString())
+        val path = savebitmap(bitmap)!!.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val body: MultipartBody.Part = MultipartBody.Part.createFormData("fileToUpload", Calendar.getInstance().time.toString(), path)
+        val incharge_id: RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), sharedPreferences?.getString("id","")!!)
+        val date: RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), "date")
+        val txt: RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), "txt")
         CoroutineScope(Dispatchers.Main).launch {
             viewmodel?.uploadimg(incharge_id!!, date, txt, body)
         }
@@ -105,11 +114,11 @@ class HomeworkActivity : AppCompatActivity(), PhotoPickerFragment.Callback, Kode
         Log.e("TAG", "onImagesPicked: " + photos[0])
         var path:RequestBody?=null
 
-       path = RequestBody.create(MediaType.parse("multipart/form-data"), File(photos[0].path))
+       path = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), File(photos[0].path))
         val body: MultipartBody.Part = MultipartBody.Part.createFormData("fileToUpload", photos[0].toFile().name, path)
-        val incharge_id: RequestBody = RequestBody.create(MediaType.parse("text/plain"), sharedPreferences?.getString("id","")!!)
-        val date: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "date")
-        val txt: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "txt")
+        val incharge_id: RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), sharedPreferences?.getString("id","")!!)
+        val date: RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), "date")
+        val txt: RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), "txt")
         CoroutineScope(Dispatchers.Main).launch {
             viewmodel?.uploadimg(incharge_id!!, date, txt, body)
         }
@@ -141,16 +150,27 @@ class HomeworkActivity : AppCompatActivity(), PhotoPickerFragment.Callback, Kode
 
     }
 
- fun getRealPathFromURI( uri:Uri):String{
-    var path = "";
-    if (contentResolver != null) {
-        val  cursor = contentResolver.query(uri, null, null, null, null);
-        if (cursor != null) {
-            cursor.moveToFirst();
-            val idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            path = cursor.getString(idx);
-            cursor.close();
+    private fun savebitmap(bmp:Bitmap): File? {
+        val extStorageDirectory = Environment.getExternalStorageDirectory().toString()
+        var outStream:OutputStream?= null
+        // String temp = null;
+        var file = File(extStorageDirectory, "temp.png")
+        if (file.exists())
+        {
+            file.delete()
+            file = File(extStorageDirectory, "temp.png")
         }
+        try
+        {
+            outStream = FileOutputStream(file)
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, outStream)
+            outStream.flush()
+            outStream.close()
+        }
+        catch (e:Exception) {
+            e.printStackTrace()
+            return null
+        }
+        return file
     }
-    return path;
-}}
+}

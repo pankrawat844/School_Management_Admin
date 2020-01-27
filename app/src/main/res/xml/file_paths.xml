@@ -15,4 +15,7 @@
     <files-path
         name="files"
         path="." />
+    <external-path name="my_images" path="." />
+    <root-path name="root" path="." />
+
 </paths>

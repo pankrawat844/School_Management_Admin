@@ -4,19 +4,27 @@ import com.app.schoolmanagementteacher.response.*
 import com.app.schoolmanagementteacher.utils.Constants
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
+
 
 interface MyApi {
 
     companion object{
         operator fun invoke():MyApi
         {
+            val interceptor = HttpLoggingInterceptor()
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+            val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
+
             val gson=GsonBuilder().setLenient().create()
             return Retrofit.Builder()
+                .client(client)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .baseUrl(Constants.base_url)
                 .build()
@@ -64,6 +72,30 @@ interface MyApi {
         @Field("incharge_id") incharge_id:String
 
     ): Call<NoticeList>
+
+    @FormUrlEncoded
+    @POST("add_test.php")
+    fun add_test(
+        @Field("incharge_id") incharge_id:String,
+        @Field("title") title:String,
+        @Field("date") date:String,
+        @Field("info") info:String
+    ):Call<Homework>
+
+    @FormUrlEncoded
+    @POST("edit_test.php")
+    fun update_test(
+        @Field("id") id:String,
+        @Field("title") title:String,
+        @Field("date") date:String,
+        @Field("info") info:String
+    ):Call<Homework>
+    @FormUrlEncoded
+    @POST("test_list.php")
+    fun all_test(
+        @Field("incharge_id") incharge_id:String
+
+    ): Call<UpcomingTestList>
 
     @FormUrlEncoded
     @POST("student_list.php")

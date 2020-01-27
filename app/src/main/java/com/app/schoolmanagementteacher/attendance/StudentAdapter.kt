@@ -36,6 +36,13 @@ class StudentAdapter(val list:List<StudentList.Response>):RecyclerView.Adapter<S
     }
     override fun onBindViewHolder(holder: Viewholder, position: Int) {
         holder.name.text = list[position].name
+
+        list[position].attendence.let {
+            if(it=="p")
+                holder.present.isChecked=true
+            if(it=="a")
+                holder.absent.isChecked=true
+        }
         holder.radioGroup.tag = position
         holder.absent.tag = position
         holder.present.tag = position

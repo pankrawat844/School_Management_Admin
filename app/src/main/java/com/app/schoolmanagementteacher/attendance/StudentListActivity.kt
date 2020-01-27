@@ -2,7 +2,10 @@ package com.app.schoolmanagementteacher.attendance
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
@@ -64,7 +67,7 @@ class StudentListActivity : AppCompatActivity(), KodeinAware, AttendenceListener
                 if (j.attendence != null) {
                     val jsonObject = JSONObject()
                     jsonObject.put("name", j.name)
-                    jsonObject.put("id", j.rollNo)
+                    jsonObject.put("roll_no", j.rollNo)
                     jsonObject.put("attendence", j.attendence)
                     jsonArray.put(jsonObject)
                 }
@@ -92,12 +95,26 @@ class StudentListActivity : AppCompatActivity(), KodeinAware, AttendenceListener
         toast(data.response!!)
     }
 
+    @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun onAllStudentSuccess(data: StudentList) {
         progress_bar.hide()
+        if(attendenceData?.response?.attendence!=null) {
+            val jsonArray = JSONArray(attendenceData?.response?.attendence)
+            for (i in 0 until jsonArray.length()) {
+                val jsonObject = jsonArray.getJSONObject(i)
+                for (j in data.response!!) {
+                    if (jsonObject.getString("roll_no") == j.rollNo) {
+                        j.attendence = jsonObject.getString("attendence")
+                    }
+                }
+            }
+        }
+
         initRecyerview(data.response!!)
     }
 
     override fun onCheckAttendence(data: CheckAttendence) {
+        Log.e("TAG", "onCheckAttendence: "+data.toString())
         if (data.success!!) {
             attendenceData = data
         }
@@ -108,6 +125,7 @@ class StudentListActivity : AppCompatActivity(), KodeinAware, AttendenceListener
     }
 
     override fun onCheckAttendenceFailour(msg: String) {
+        toast(msg)
         viewmodel.allstudent(
             sharedPreferences.getString("class_name", "")!!,
             sharedPreferences.getString("section_name", "")!!
@@ -127,18 +145,14 @@ class StudentListActivity : AppCompatActivity(), KodeinAware, AttendenceListener
             layoutManager = linearLayoutManager
             setAdapter(adapter)
 
-
         }
-//        recycler_view.smoothScrollToPosition(adapter.getItemCount())
+
         recycler_view.viewTreeObserver.addOnGlobalLayoutListener { }
 
 
     }
 
-    fun RecyclerView.setMaxViewPoolSize(maxViewTypeId: Int, maxPoolSize: Int) {
-        for (i in 0..maxViewTypeId)
-            recycledViewPool.setMaxRecycledViews(i, maxPoolSize)
-    }
+
 
     private fun List<StudentList.Response>.toStudentItem(): List<StudentItem> {
         return this.map {

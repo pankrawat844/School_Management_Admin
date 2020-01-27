@@ -17,7 +17,7 @@ class Repository(val myApi: MyApi):SafeApiRequest() {
     suspend fun sendHomework(@Part("incharge_id") incharge_id: RequestBody,
                              @Part("date") date:RequestBody,
                              @Part("homework_txt") homework_txt:RequestBody,
-                             @Part("fileToUpload") img: MultipartBody.Part):Call<Homework>
+                            img: MultipartBody.Part):Call<Homework>
     {
         return  myApi.homework_upload(incharge_id, date, homework_txt, img)
     }
@@ -28,9 +28,9 @@ class Repository(val myApi: MyApi):SafeApiRequest() {
         return  myApi.all_homework(incharge_id)
     }
 
-    suspend fun addNotice(@Part("incharge_id") incharge_id: String,
-                             @Part("title") title:String,
-                             @Part("notice") notice:String):Call<Homework>
+    suspend fun addNotice( incharge_id: String,
+                             title:String,
+                           notice:String):Call<Homework>
     {
         return  myApi.add_notice(incharge_id, title,notice)
     }
@@ -43,6 +43,26 @@ class Repository(val myApi: MyApi):SafeApiRequest() {
         return myApi.all_student(class_name, section_name)
     }
 
+    suspend fun allTest(incharge_id: String): Call<UpcomingTestList> {
+        return myApi.all_test(incharge_id)
+    }
+
+    suspend fun addTest( incharge_id: String,
+                         title:String,
+                           date:String,
+                         info:String):Call<Homework>
+    {
+        return  myApi.add_test(incharge_id, title,date,info)
+    }
+
+    suspend fun updateTest(
+                        id:String,
+                        title:String,
+                         date:String,
+                         info:String):Call<Homework>
+    {
+        return  myApi.update_test(id, title,date,info)
+    }
     suspend fun addAttendence(
         class_name: String,
         section_name: String,

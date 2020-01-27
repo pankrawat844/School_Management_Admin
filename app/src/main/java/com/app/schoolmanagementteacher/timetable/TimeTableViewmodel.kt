@@ -1,4 +1,4 @@
-package com.app.schoolmanagementteacher.homework
+package com.app.schoolmanagementteacher.timetable
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -16,31 +16,30 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.http.Part
 
-//import com.github.dhaval2404.imagepicker.ImagePicker
+class TimeTableViewmodel(val repository: Repository):ViewModel() {
+    var timetableListener: TimeTableListener?=null
 
-class HomeworkViewmodel(val repository: Repository):ViewModel() {
-        var homeworkListener:HomeworkListener?=null
-
-    suspend fun uploadimg( @Part("incharge_id") incharge_id:RequestBody,
-                           @Part("date") date:RequestBody,
-                           @Part("homework_txt") homework_txt:RequestBody,
-                            img:MultipartBody.Part)
+    suspend fun uploadimg(@Part("incharge_id") incharge_id: RequestBody,
+                          @Part("date") date: RequestBody,
+                          @Part("homework_txt") homework_txt: RequestBody,
+                          img: MultipartBody.Part)
     {
-        homeworkListener?.onStarted()
-        repository.sendHomework(incharge_id,date, homework_txt, img).enqueue(object :Callback<Homework>{
+        timetableListener?.onStarted()
+        repository.sendHomework(incharge_id,date, homework_txt, img).enqueue(object :
+            Callback<Homework> {
             override fun onFailure(call: Call<Homework>, t: Throwable) {
                 Log.e("homeviewmodel", "onFailure: "+t.message);
-                homeworkListener?.onFailure(t.message!!)
+                timetableListener?.onFailure(t.message!!)
 
             }
 
             override fun onResponse(call: Call<Homework>, response: Response<Homework>) {
                 if(response.isSuccessful) {
                     Log.e("homeviewmodel", "onsuccess: " + response.body()!!.response)
-                    homeworkListener?.onSuccess(response.body()!!)
+                    timetableListener?.onImageSuccess(response.body()!!)
                 }else
                 {
-                    homeworkListener?.onFailure(JSONObject(response.errorBody()?.string()).getString("response"))
+                    timetableListener?.onFailure(JSONObject(response.errorBody()?.string()).getString("response"))
                 }
 
             }
@@ -50,11 +49,11 @@ class HomeworkViewmodel(val repository: Repository):ViewModel() {
     }
 
     fun allHomework( incharge_id: String){
-        homeworkListener?.onStarted()
+        timetableListener?.onStarted()
         CoroutineScope(Dispatchers.Main).launch {
-            repository.allHomework(incharge_id).enqueue(object:Callback<HomeworkList>{
+            repository.allHomework(incharge_id).enqueue(object: Callback<HomeworkList> {
                 override fun onFailure(call: Call<HomeworkList>, t: Throwable) {
-                homeworkListener?.onFailure(t.message!!)
+                    timetableListener?.onFailure(t.message!!)
                 }
 
                 override fun onResponse(
@@ -62,9 +61,9 @@ class HomeworkViewmodel(val repository: Repository):ViewModel() {
                     response: Response<HomeworkList>
                 ) {
                     if(response.isSuccessful)
-                    homeworkListener?.onAllHomeworkSuccess(response.body()!!)
+                        timetableListener?.onPdfSuccess(response.body()!!)
                     else
-                        homeworkListener?.onFailure(JSONObject(response.errorBody()?.string()).getString("message"))
+                        timetableListener?.onFailure(JSONObject(response.errorBody()?.string()).getString("message"))
 //                            Log.e("error",response.errorBody()?.string())
                 }
 

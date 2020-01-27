@@ -48,11 +48,13 @@ class NoticeActivity : AppCompatActivity(),KodeinAware,NoticeListener {
             bottomSheetBehavior.state=BottomSheetBehavior.STATE_EXPANDED
         }
         bottom_sheet_nxt.setOnClickListener {
+            val title=titl.text.toString().trim()
+            val notice=notice_txt.text.toString().trim()
             CoroutineScope(Dispatchers.Main).launch {
-                if(titl.text.toString().isNullOrEmpty() || notice.text.toString().isNullOrEmpty())
+                if(title.isNullOrBlank() || notice.isNullOrBlank())
                     toast("Both field is mandatory.")
                 else
-                viewmodel.addNotice(sharedPreferences?.getString("id", "")!!, titl.text.toString(),notice.text.toString())
+                viewmodel.addNotice(sharedPreferences?.getString("id", "")!!, title,notice)
             }
         }
     }
@@ -62,6 +64,8 @@ class NoticeActivity : AppCompatActivity(),KodeinAware,NoticeListener {
     }
 
     override fun onSuccess(data: Homework) {
+        toast(data.response!!)
+        finish()
     }
 
     override fun onAllNoticeSuccess(data: NoticeList) {

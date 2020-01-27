@@ -14,6 +14,10 @@ import com.app.schoolmanagementteacher.network.Repository
 import com.app.schoolmanagementteacher.notice.NoticeViewmodel
 import com.app.schoolmanagementteacher.notice.NoticeViewmodelFactory
 import com.app.schoolmanagementteacher.photopicker.loader.GlideImageLoader
+import com.app.schoolmanagementteacher.timetable.TimeTableViewmodel
+import com.app.schoolmanagementteacher.timetable.TimeTableViewmodelFactory
+import com.app.schoolmanagementteacher.upcomingtest.TestViewmodel
+import com.app.schoolmanagementteacher.upcomingtest.TestViewmodelFactory
 import lv.chi.photopicker.ChiliPhotoPicker
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -39,7 +43,13 @@ class MainApplication:Application(),KodeinAware {
 
         bind() from singleton { AttendenceViewmodelFactory(instance()) }
         bind() from singleton { AttendenceViewmodel(instance()) }
-     }
+
+        bind() from singleton { TestViewmodelFactory(instance()) }
+        bind() from singleton { TestViewmodel(instance()) }
+
+        bind() from singleton { TimeTableViewmodelFactory(instance()) }
+        bind() from singleton { TimeTableViewmodel(instance()) }
+    }
 
     override fun onCreate() {
         super.onCreate()

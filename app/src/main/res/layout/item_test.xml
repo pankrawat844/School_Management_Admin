@@ -3,7 +3,7 @@
     <data>
         <variable
             name="data"
-            type="com.app.schoolmanagementteacher.response.NoticeList.Response" />
+            type="com.app.schoolmanagementteacher.response.UpcomingTestList.Response" />
     </data>
 
 <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@{data.title}"
+        android:text="@{data.testName}"
         android:textColor="@color/black"
         android:textSize="17dp"
         android:layout_marginTop="5dp"
@@ -52,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="@{data.notice}"
+            android:text="@{data.info}"
             android:textSize="15dp"
             android:fontFamily="@font/maven_pro_regular"
 
