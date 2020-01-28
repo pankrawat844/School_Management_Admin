@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,6 +21,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_notice.*
+import kotlinx.android.synthetic.main.activity_notice.menu
+import kotlinx.android.synthetic.main.activity_notice.progress_bar
+import kotlinx.android.synthetic.main.activity_time_table.*
 import kotlinx.android.synthetic.main.bottomsheet_notice.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,6 +61,8 @@ class NoticeActivity : AppCompatActivity(),KodeinAware,NoticeListener {
                 viewmodel.addNotice(sharedPreferences?.getString("id", "")!!, title,notice)
             }
         }
+        if (sharedPreferences?.getString("role", "") == "incharge")
+            menu.visibility = View.VISIBLE
     }
 
     override fun onStarted() {

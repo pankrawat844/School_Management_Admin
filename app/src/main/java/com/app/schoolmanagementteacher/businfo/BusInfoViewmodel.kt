@@ -1,4 +1,4 @@
-package com.app.schoolmanagementteacher.timetable
+package com.app.schoolmanagementteacher.businfo
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -16,30 +16,30 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class TimeTableViewmodel(val repository: Repository):ViewModel() {
-    var timetableListener: TimeTableListener? = null
+class BusInfoViewmodel(val repository: Repository):ViewModel() {
+    var businfoListener: BusInfoListener? = null
 
     suspend fun upload(
         class_name: RequestBody,
         section_name: RequestBody,
         img: MultipartBody.Part
     ) {
-        timetableListener?.onStarted()
+        businfoListener?.onStarted()
         repository.uploadTimetable(class_name, section_name, img).enqueue(object :
             Callback<Homework> {
             override fun onFailure(call: Call<Homework>, t: Throwable) {
                 Log.e("homeviewmodel", "onFailure: " + t.message)
-                timetableListener?.onFailure(t.message!!)
+                businfoListener?.onFailure(t.message!!)
 
             }
 
             override fun onResponse(call: Call<Homework>, response: Response<Homework>) {
                 if (response.isSuccessful) {
                     Log.e("homeviewmodel", "onsuccess: " + response.body()!!.response)
-                    timetableListener?.onImageSuccess(response.body()!!)
+                    businfoListener?.onImageSuccess(response.body()!!)
                 }else
                 {
-                    timetableListener?.onFailure(JSONObject(response.errorBody()?.string()).getString("response"))
+                    businfoListener?.onFailure(JSONObject(response.errorBody()?.string()).getString("response"))
                 }
 
             }
@@ -50,11 +50,11 @@ class TimeTableViewmodel(val repository: Repository):ViewModel() {
 
     fun timetable( class_name: String,
                    section_name: String){
-        timetableListener?.onStarted()
+        businfoListener?.onStarted()
         CoroutineScope(Dispatchers.Main).launch {
             repository.getTimetable(class_name,section_name).enqueue(object: Callback<Timetable> {
                 override fun onFailure(call: Call<Timetable>, t: Throwable) {
-                    timetableListener?.onFailure(t.message!!)
+                    businfoListener?.onFailure(t.message!!)
                 }
 
                 override fun onResponse(
@@ -62,9 +62,9 @@ class TimeTableViewmodel(val repository: Repository):ViewModel() {
                     response: Response<Timetable>
                 ) {
                     if(response.isSuccessful)
-                        timetableListener?.onSuccess(response.body()!!)
+                        businfoListener?.onSuccess(response.body()!!)
                     else
-                        timetableListener?.onFailure(JSONObject(response.errorBody()?.string()).getString("message"))
+                        businfoListener?.onFailure(JSONObject(response.errorBody()?.string()).getString("message"))
 //                            Log.e("error",response.errorBody()?.string())
                 }
 

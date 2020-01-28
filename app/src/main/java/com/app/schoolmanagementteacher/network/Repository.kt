@@ -88,4 +88,12 @@ class Repository(val myApi: MyApi):SafeApiRequest() {
     ): Call<Homework> {
         return myApi.upload_timetable(class_id, section_name, img)
     }
+
+    suspend fun getTimetable(class_name: String,
+                             section_name: String):Call<Timetable>
+    {
+        return  myApi.get_timetable(class_name,section_name)
+    }
+
+
 }

@@ -14,8 +14,8 @@ import com.app.schoolmanagementteacher.network.Repository
 import com.app.schoolmanagementteacher.notice.NoticeViewmodel
 import com.app.schoolmanagementteacher.notice.NoticeViewmodelFactory
 import com.app.schoolmanagementteacher.photopicker.loader.GlideImageLoader
-import com.app.schoolmanagementteacher.timetable.TimeTableViewmodel
-import com.app.schoolmanagementteacher.timetable.TimeTableViewmodelFactory
+import com.app.schoolmanagementteacher.businfo.BusInfoViewmodel
+import com.app.schoolmanagementteacher.timetable.BusInfoViewmodelFactory
 import com.app.schoolmanagementteacher.upcomingtest.TestViewmodel
 import com.app.schoolmanagementteacher.upcomingtest.TestViewmodelFactory
 import lv.chi.photopicker.ChiliPhotoPicker
@@ -47,8 +47,8 @@ class MainApplication:Application(),KodeinAware {
         bind() from singleton { TestViewmodelFactory(instance()) }
         bind() from singleton { TestViewmodel(instance()) }
 
-        bind() from singleton { TimeTableViewmodelFactory(instance()) }
-        bind() from singleton { TimeTableViewmodel(instance()) }
+        bind() from singleton { BusInfoViewmodelFactory(instance()) }
+        bind() from singleton { BusInfoViewmodel(instance()) }
     }
 
     override fun onCreate() {

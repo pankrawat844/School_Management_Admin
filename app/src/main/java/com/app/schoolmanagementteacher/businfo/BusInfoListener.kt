@@ -1,10 +1,10 @@
-package com.app.schoolmanagementteacher.timetable
+package com.app.schoolmanagementteacher.businfo
 
 import com.app.schoolmanagementteacher.response.Homework
 import com.app.schoolmanagementteacher.response.HomeworkList
 import com.app.schoolmanagementteacher.response.Timetable
 
-interface TimeTableListener {
+interface BusInfoListener {
     fun onStarted()
     fun onImageSuccess(data:Homework)
     fun onPdfSuccess(data:Homework)

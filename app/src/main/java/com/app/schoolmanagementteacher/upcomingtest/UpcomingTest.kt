@@ -21,7 +21,10 @@ import com.app.schoolmanagementteacher.utils.toast
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
+import kotlinx.android.synthetic.main.activity_time_table.*
 import kotlinx.android.synthetic.main.activity_upcoming_test.*
+import kotlinx.android.synthetic.main.activity_upcoming_test.menu
+import kotlinx.android.synthetic.main.activity_upcoming_test.progress_bar
 import kotlinx.android.synthetic.main.bottomsheet_test.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -132,6 +135,8 @@ class UpcomingTest : AppCompatActivity(), KodeinAware, TestListener {
 
                 })
         )
+        if (sharedPreferences?.getString("role", "") == "incharge")
+            menu.visibility = View.VISIBLE
     }
 
     override fun onStarted() {

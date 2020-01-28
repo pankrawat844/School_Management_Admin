@@ -131,4 +131,11 @@ interface MyApi {
         @Part img: MultipartBody.Part,
         @Part("type") type: Int = 1
     ): Call<Homework>
+
+    @FormUrlEncoded
+    @POST("timetable_list.php")
+    fun get_timetable(
+        @Field("class_name") class_name: String,
+        @Field("section_name") notice: String
+    ): Call<Timetable>
 }

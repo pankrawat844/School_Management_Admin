@@ -1,4 +1,4 @@
-package com.app.schoolmanagementteacher.timetable
+package com.app.schoolmanagementteacher.businfo
 
 import android.content.*
 import android.net.Uri
@@ -15,10 +15,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toFile
 import androidx.lifecycle.ViewModelProviders
 import com.app.schoolmanagementteacher.R
-import com.app.schoolmanagementteacher.businfo.BusInfoListener
-import com.app.schoolmanagementteacher.businfo.BusInfoViewmodel
 import com.app.schoolmanagementteacher.response.Homework
 import com.app.schoolmanagementteacher.response.Timetable
+import com.app.schoolmanagementteacher.timetable.BusInfoViewmodelFactory
 import com.app.schoolmanagementteacher.utils.Constants
 import com.app.schoolmanagementteacher.utils.hide
 import com.app.schoolmanagementteacher.utils.show
@@ -41,7 +40,7 @@ import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 import java.io.File
 
-class TimeTableActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
+class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
     PhotoPickerFragment.Callback {
     lateinit var sharedPreferences: SharedPreferences
     override val kodein by kodein()
@@ -50,7 +49,7 @@ class TimeTableActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
     var viewmodel: BusInfoViewmodel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_time_table)
+        setContentView(R.layout.activity_bus_info)
 
         viewmodel = ViewModelProviders.of(this, factory).get(BusInfoViewmodel::class.java)
         viewmodel?.timetableListener = this
