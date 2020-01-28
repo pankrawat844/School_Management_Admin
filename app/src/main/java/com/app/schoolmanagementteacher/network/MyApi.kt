@@ -138,4 +138,21 @@ interface MyApi {
         @Field("class_name") class_name: String,
         @Field("section_name") notice: String
     ): Call<Timetable>
+
+
+    @Multipart
+    @POST("businfo.php")
+    fun upload_businfo(
+        @Part("class_name") class_name: RequestBody,
+        @Part("section_name") section_name: RequestBody,
+        @Part img: MultipartBody.Part,
+        @Part("type") type: Int = 1
+    ): Call<Homework>
+
+    @FormUrlEncoded
+    @POST("businfo_list.php")
+    fun get_busInfo(
+        @Field("class_name") class_name: String,
+        @Field("section_name") notice: String
+    ): Call<Timetable>
 }

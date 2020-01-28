@@ -89,11 +89,26 @@ class Repository(val myApi: MyApi):SafeApiRequest() {
         return myApi.upload_timetable(class_id, section_name, img)
     }
 
-    suspend fun getTimetable(class_name: String,
-                             section_name: String):Call<Timetable>
-    {
-        return  myApi.get_timetable(class_name,section_name)
+    suspend fun getTimetable(
+        class_name: String,
+        section_name: String
+    ): Call<Timetable> {
+        return myApi.get_timetable(class_name, section_name)
     }
 
+    suspend fun uploadBusInfo(
+        @Part("class_name") class_id: RequestBody,
+        @Part("section_name") section_name: RequestBody,
+        img: MultipartBody.Part
+    ): Call<Homework> {
+        return myApi.upload_businfo(class_id, section_name, img)
+    }
+
+    suspend fun getBusInfo(
+        class_name: String,
+        section_name: String
+    ): Call<Timetable> {
+        return myApi.get_busInfo(class_name, section_name)
+    }
 
 }

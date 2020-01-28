@@ -27,4 +27,6 @@
         <item quantity="one">You can pick only %d image</item>
         <item quantity="other">You can pick only %d images</item>
     </plurals>
+    <string name="youtube_key">AIzaSyAe6iiSZ0WnSB6RyfHcQug8NRai6GfShgQ</string>
+
 </resources>

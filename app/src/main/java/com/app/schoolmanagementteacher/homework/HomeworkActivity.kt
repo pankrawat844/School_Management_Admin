@@ -1,15 +1,14 @@
 package com.app.schoolmanagementteacher.homework
 
-import android.app.Activity
-import android.content.*
-import android.database.Cursor
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
@@ -17,14 +16,11 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toFile
 import androidx.lifecycle.ViewModelProviders
-import androidx.loader.content.CursorLoader
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.schoolmanagementteacher.R
 import com.app.schoolmanagementteacher.response.Homework
 import com.app.schoolmanagementteacher.response.HomeworkList
-import com.app.schoolmanagementteacher.utils.hide
-import com.app.schoolmanagementteacher.utils.show
-import com.app.schoolmanagementteacher.utils.toast
+import com.app.schoolmanagementteacher.utils.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.activity_homework.*
 import kotlinx.android.synthetic.main.bottomsheet_homework_txt.*
@@ -32,11 +28,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import lv.chi.photopicker.PhotoPickerFragment
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
@@ -45,7 +41,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class HomeworkActivity : AppCompatActivity(), PhotoPickerFragment.Callback, KodeinAware,
@@ -54,7 +49,8 @@ class HomeworkActivity : AppCompatActivity(), PhotoPickerFragment.Callback, Kode
 
     val factory: HomeworkViewmodelFactory by instance()
     var viewmodel: HomeworkViewmodel? = null
-    var sharedPreferences:SharedPreferences?=null
+    var sharedPreferences: SharedPreferences? = null
+    var list: List<HomeworkList.Response>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_homework)
@@ -74,53 +70,80 @@ class HomeworkActivity : AppCompatActivity(), PhotoPickerFragment.Callback, Kode
         }
         val bottomSheetBehavior=BottomSheetBehavior.from(bottom_sheet_homework)
         bottomSheetBehavior.state=BottomSheetBehavior.STATE_HIDDEN
-    txt.setOnClickListener {
-        if(bottomSheetBehavior.state==BottomSheetBehavior.STATE_HIDDEN)
-        {
-            bottomSheetBehavior.state=BottomSheetBehavior.STATE_EXPANDED
+        txt.setOnClickListener {
+            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
         }
-    }
 
-        if(sharedPreferences?.getString("role","")=="incharge")
-            menu.visibility= View.VISIBLE
+        if (sharedPreferences?.getString("role", "") == "incharge")
+            menu.visibility = View.VISIBLE
 
+
+        recycler_view.addOnItemTouchListener(
+            RecyclerItemClickListenr(
+                this,
+                recycler_view,
+                object : RecyclerItemClickListenr.OnItemClickListener {
+                    override fun onItemClick(view: View, position: Int) {
+                        if (!list?.get(position)?.homeworkImg.isNullOrEmpty()) {
+                            Intent(this@HomeworkActivity, FullScreenActivity::class.java).also {
+                                it.putExtra("url", list?.get(position)?.homeworkImg!!)
+                                startActivity(it)
+                            }
+                        }
+                    }
+
+                    override fun onItemLongClick(view: View?, position: Int) {
+                    }
+
+                })
+        )
     }
 
 
 
     fun  getImageUri( inContext:Context,  inImage:Bitmap):Uri {
-    val bytes =  ByteArrayOutputStream();
-    inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-    val path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-    return Uri.parse(path);
-}
+        val bytes = ByteArrayOutputStream()
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path =
+            MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "Title", null)
+        return Uri.parse(path)
+    }
 
     override fun onImagesPicked(photos: ArrayList<Uri>, data: Intent?) {
-        Log.e("TAG", "onImagesPicked: "+photos[0])
+        Log.e("TAG", "onImagesPicked: " + photos[0])
 
-       val bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(photos[0]))
-        toast("OnActivityResult"+bitmap.toString())
+        val bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(photos[0]))
+        toast("OnActivityResult" + bitmap.toString())
         val path = savebitmap(bitmap)!!.asRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val body: MultipartBody.Part = MultipartBody.Part.createFormData("fileToUpload", Calendar.getInstance().time.toString(), path)
-        val incharge_id: RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), sharedPreferences?.getString("id","")!!)
-        val date: RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), "date")
-        val txt: RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), "txt")
+        val body: MultipartBody.Part = MultipartBody.Part.createFormData(
+            "fileToUpload",
+            Calendar.getInstance().time.toString(),
+            path
+        )
+        val incharge_id: RequestBody =
+            sharedPreferences?.getString("id", "")!!.toRequestBody("text/plain".toMediaTypeOrNull())
+        val date: RequestBody = "date".toRequestBody("text/plain".toMediaTypeOrNull())
+        val txt: RequestBody = "txt".toRequestBody("text/plain".toMediaTypeOrNull())
         CoroutineScope(Dispatchers.Main).launch {
-            viewmodel?.uploadimg(incharge_id!!, date, txt, body)
+            viewmodel?.uploadimg(incharge_id, date, txt, body)
         }
     }
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun onImagesPicked(photos: ArrayList<Uri>) {
         Log.e("TAG", "onImagesPicked: " + photos[0])
-        var path:RequestBody?=null
+        var path: RequestBody? = null
 
-       path = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), File(photos[0].path))
-        val body: MultipartBody.Part = MultipartBody.Part.createFormData("fileToUpload", photos[0].toFile().name, path)
-        val incharge_id: RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), sharedPreferences?.getString("id","")!!)
-        val date: RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), "date")
-        val txt: RequestBody = RequestBody.create("text/plain".toMediaTypeOrNull(), "txt")
+        path = File(photos[0].path).asRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val body: MultipartBody.Part =
+            MultipartBody.Part.createFormData("fileToUpload", photos[0].toFile().name, path)
+        val incharge_id: RequestBody =
+            sharedPreferences?.getString("id", "")!!.toRequestBody("text/plain".toMediaTypeOrNull())
+        val date: RequestBody = "date".toRequestBody("text/plain".toMediaTypeOrNull())
+        val txt: RequestBody = "txt".toRequestBody("text/plain".toMediaTypeOrNull())
         CoroutineScope(Dispatchers.Main).launch {
-            viewmodel?.uploadimg(incharge_id!!, date, txt, body)
+            viewmodel?.uploadimg(incharge_id, date, txt, body)
         }
     }
 
@@ -135,11 +158,12 @@ class HomeworkActivity : AppCompatActivity(), PhotoPickerFragment.Callback, Kode
     }
 
     override fun onAllHomeworkSuccess(data: HomeworkList) {
-        Log.e("TAG", "onAllHomeworkSuccess: "+data.response.toString() )
+        Log.e("TAG", "onAllHomeworkSuccess: " + data.response.toString())
         progress_bar.hide()
-        val adapter=HomeworkRecyclerviewAdapter(data?.response!!)
-        recycler_view.layoutManager=LinearLayoutManager(this)
-        recycler_view.adapter=adapter
+        list = data.response!!
+        val adapter = HomeworkRecyclerviewAdapter(data.response)
+        recycler_view.layoutManager = LinearLayoutManager(this)
+        recycler_view.adapter = adapter
     }
 
 

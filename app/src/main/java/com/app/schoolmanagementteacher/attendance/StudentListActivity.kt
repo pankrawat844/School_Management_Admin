@@ -124,7 +124,7 @@ class StudentListActivity : AppCompatActivity(), KodeinAware, AttendenceListener
     }
 
     override fun onCheckAttendenceFailour(msg: String) {
-        toast(msg)
+//        toast(msg)
         viewmodel.allstudent(
             sharedPreferences.getString("class_name", "")!!,
             sharedPreferences.getString("section_name", "")!!

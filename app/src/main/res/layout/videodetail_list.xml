@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="viewmodel"
+            type="com.app.schoolmanagementteacher.response.YoutubeVideoRelated.Item" />
+
+        <variable
+            name="glide"
+            type="com.bumptech.glide.Glide" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+
+        xmlns:diagonal="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/backbroundcardview"
+        android:orientation="horizontal">
+
+
+        <RelativeLayout
+            android:id="@+id/rel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            >
+
+            <com.github.florent37.diagonallayout.DiagonalLayout
+                android:id="@+id/diagonalLayout"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                diagonal:diagonal_angle="2"
+                diagonal:diagonal_direction="right"
+                diagonal:diagonal_position="top">
+
+                <ImageView
+                    android:id="@+id/youtube_video"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Image"
+                    android:scaleType="fitXY"
+                    android:src="@{viewmodel.snippet.title}"
+                    app:src1="@{viewmodel.snippet.thumbnails.medium.url.toString()}" />
+            </com.github.florent37.diagonallayout.DiagonalLayout>
+
+            <TextView
+                android:id="@+id/video_title"
+                style="@style/VideoTextBold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/diagonalLayout"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:maxLines="2"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:text="@{viewmodel.snippet.title}" />
+
+            <TextView
+                android:id="@+id/video_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/video_title"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
+                android:maxLines="3"
+                android:textColor="#fff"
+                tools:text="@{viewmodel.snippet.description}" />
+        </RelativeLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rel" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

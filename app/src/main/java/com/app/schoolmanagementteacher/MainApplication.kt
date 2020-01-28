@@ -3,6 +3,7 @@ package com.app.schoolmanagementteacher
 import android.app.Application
 import com.app.schoolmanagementteacher.attendance.AttendenceViewmodel
 import com.app.schoolmanagementteacher.attendance.AttendenceViewmodelFactory
+import com.app.schoolmanagementteacher.businfo.BusInfoViewmodel
 import com.app.schoolmanagementteacher.home.HomeViewModel
 import com.app.schoolmanagementteacher.home.HomeViewModelFactory
 import com.app.schoolmanagementteacher.homework.HomeworkViewmodel
@@ -11,13 +12,20 @@ import com.app.schoolmanagementteacher.login.LoginViewmodel
 import com.app.schoolmanagementteacher.login.LoginViewmodelFactory
 import com.app.schoolmanagementteacher.network.MyApi
 import com.app.schoolmanagementteacher.network.Repository
+import com.app.schoolmanagementteacher.network.VideoRepository
+import com.app.schoolmanagementteacher.network.YoutubeAPI
 import com.app.schoolmanagementteacher.notice.NoticeViewmodel
 import com.app.schoolmanagementteacher.notice.NoticeViewmodelFactory
 import com.app.schoolmanagementteacher.photopicker.loader.GlideImageLoader
-import com.app.schoolmanagementteacher.businfo.BusInfoViewmodel
 import com.app.schoolmanagementteacher.timetable.BusInfoViewmodelFactory
+import com.app.schoolmanagementteacher.timetable.TimeTableViewmodel
+import com.app.schoolmanagementteacher.timetable.TimeTableViewmodelFactory
 import com.app.schoolmanagementteacher.upcomingtest.TestViewmodel
 import com.app.schoolmanagementteacher.upcomingtest.TestViewmodelFactory
+import com.app.schoolmanagementteacher.videos.VideosViewModel
+import com.app.schoolmanagementteacher.videos.VideosViewModelFactory
+import com.app.schoolmanagementteacher.videos.YoutubeDetailViewModel
+import com.app.schoolmanagementteacher.videos.YoutubeDetailViewModelFactory
 import lv.chi.photopicker.ChiliPhotoPicker
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -47,8 +55,18 @@ class MainApplication:Application(),KodeinAware {
         bind() from singleton { TestViewmodelFactory(instance()) }
         bind() from singleton { TestViewmodel(instance()) }
 
+        bind() from singleton { TimeTableViewmodel(instance()) }
+        bind() from singleton { TimeTableViewmodelFactory(instance()) }
+
         bind() from singleton { BusInfoViewmodelFactory(instance()) }
         bind() from singleton { BusInfoViewmodel(instance()) }
+
+        bind() from singleton { VideosViewModel(instance()) }
+        bind() from singleton { VideosViewModelFactory(instance()) }
+        bind() from singleton { VideoRepository(instance()) }
+        bind() from singleton { YoutubeAPI() }
+        bind() from singleton { YoutubeDetailViewModelFactory(instance()) }
+        bind() from singleton { YoutubeDetailViewModel(instance()) }
     }
 
     override fun onCreate() {

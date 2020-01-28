@@ -1,6 +1,8 @@
 package com.app.schoolmanagementteacher.businfo
 
+import android.app.Activity
 import android.content.*
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -22,10 +24,16 @@ import com.app.schoolmanagementteacher.utils.Constants
 import com.app.schoolmanagementteacher.utils.hide
 import com.app.schoolmanagementteacher.utils.show
 import com.app.schoolmanagementteacher.utils.toast
+import com.jaiselrahman.filepicker.activity.FilePickerActivity
+import com.jaiselrahman.filepicker.config.Configurations
+import com.jaiselrahman.filepicker.model.MediaFile
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_time_table.*
-import kotlinx.android.synthetic.main.activity_time_table.menu
-import kotlinx.android.synthetic.main.activity_time_table.progress_bar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,7 +46,8 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
-import java.io.File
+import java.io.*
+
 
 class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
     PhotoPickerFragment.Callback {
@@ -52,10 +61,13 @@ class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
         setContentView(R.layout.activity_bus_info)
 
         viewmodel = ViewModelProviders.of(this, factory).get(BusInfoViewmodel::class.java)
-        viewmodel?.timetableListener = this
-        sharedPreferences=getSharedPreferences("app", Context.MODE_PRIVATE)
+        viewmodel?.businfoListener = this
+        sharedPreferences = getSharedPreferences("app", Context.MODE_PRIVATE)
 
-        viewmodel?.timetable(sharedPreferences?.getString("class_name","")!!,sharedPreferences?.getString("section_name","")!!)
+        viewmodel?.businfo(
+            sharedPreferences.getString("class_name", "")!!,
+            sharedPreferences.getString("section_name", "")!!
+        )
         image.setOnClickListener {
             PhotoPickerFragment.newInstance(
                 multiple = false,
@@ -67,10 +79,47 @@ class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
         }
 
         pdf.setOnClickListener {
-            Intent(Intent.ACTION_GET_CONTENT).also {
-                it.type = "application/pdf"
-                startActivityForResult(Intent.createChooser(it,"Select PDF"),0)
-            }
+            //            Intent(Intent.ACTION_GET_CONTENT).also {
+//                it.type = "application/pdf"
+//                startActivityForResult(Intent.createChooser(it,"Select PDF"),0)
+//            }
+
+            Dexter.withActivity(this).withPermissions(
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+                .withListener(object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        if (report?.areAllPermissionsGranted()!!) {
+                            Intent(this@BusInfoActivity, FilePickerActivity::class.java).also {
+                                it.putExtra(
+                                    FilePickerActivity.CONFIGS, Configurations.Builder()
+                                        .setCheckPermission(true)
+                                        .setShowImages(false)
+                                        .setShowVideos(false)
+                                        .enableImageCapture(false)
+                                        .setMaxSelection(1)
+                                        .setSuffixes("pdf")
+                                        .setShowFiles(true)
+                                        .setSkipZeroSizeFiles(true)
+                                        .build()
+                                )
+                                startActivityForResult(it, 0)
+                            }
+                            menu.close(true)
+                        } else {
+
+                        }
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
+
+                }).check()
             menu.close(true)
 
         }
@@ -159,24 +208,31 @@ class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode==0){
-            var path: RequestBody? = null
-            Log.e("TAG", "onActivityResult: "+getUriRealPath(this,data?.data!!) )
-            path = File(getUriRealPath(this,data?.data!!)).asRequestBody("multipart/form-data".toMediaTypeOrNull())
-            val body: MultipartBody.Part =
-                MultipartBody.Part.createFormData("fileToUpload", "xz", path)
-            val class_name: RequestBody =
-                sharedPreferences.getString(
-                    "class_name",
-                    ""
-                )!!.toRequestBody("text/plain".toMediaTypeOrNull())
-            val section_name: RequestBody =
-                sharedPreferences.getString(
-                    "section_name",
-                    ""
-                )!!.toRequestBody("text/plain".toMediaTypeOrNull())
-            CoroutineScope(Dispatchers.Main).launch {
-                viewmodel?.upload(class_name, section_name, body)
+        if(requestCode==0) {
+            if (resultCode == Activity.RESULT_OK) {
+                var path: RequestBody? = null
+                var files: ArrayList<MediaFile> =
+                    data?.getParcelableArrayListExtra(FilePickerActivity.MEDIA_FILES)!!
+
+                Log.e("TAG", "onActivityResult: " + files[0].uri.path)
+                Log.e("TAG", "onActivityResult: " + files[0].path)
+
+                path = File(files[0].path).asRequestBody("multipart/form-data".toMediaTypeOrNull())
+                val body: MultipartBody.Part =
+                    MultipartBody.Part.createFormData("fileToUpload", "xz", path)
+                val class_name: RequestBody =
+                    sharedPreferences.getString(
+                        "class_name",
+                        ""
+                    )!!.toRequestBody("text/plain".toMediaTypeOrNull())
+                val section_name: RequestBody =
+                    sharedPreferences.getString(
+                        "section_name",
+                        ""
+                    )!!.toRequestBody("text/plain".toMediaTypeOrNull())
+                CoroutineScope(Dispatchers.Main).launch {
+                    viewmodel?.upload(class_name, section_name, body)
+                }
             }
         }
     }
@@ -204,25 +260,22 @@ class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
         {
             if (isContentUri(uri))
             {
-                if (isGooglePhotoDoc(uri.getAuthority()!!))
-                {
-                    ret = uri.getLastPathSegment()!!
-                }
-                else
-                {
-                    ret = getImageRealPath(getContentResolver(), uri, "")
+                if (isGooglePhotoDoc(uri.authority!!)) {
+                    ret = uri.lastPathSegment!!
+                } else {
+                    ret = getImageRealPath(contentResolver, uri, "")
                 }
             }
             else if (isFileUri(uri))
             {
-                ret = uri.getPath()!!
+                ret = uri.path!!
             }
             else if (isDocumentUri(ctx, uri))
             {
                 // Get uri related document id.
                 val documentId = DocumentsContract.getDocumentId(uri)
                 // Get uri authority.
-                val uriAuthority = uri.getAuthority()
+                val uriAuthority = uri.authority
                 if (isMediaDoc(uriAuthority!!))
                 {
                     val idArr = documentId.split((":").toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
@@ -248,7 +301,7 @@ class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
                         }
                         // Get where clause with real document id.
                         val whereClause = MediaStore.Images.Media._ID + " = " + realDocId
-                        ret = getImageRealPath(getContentResolver(), mediaContentUri, whereClause)
+                        ret = getImageRealPath(contentResolver, mediaContentUri, whereClause)
                     }
                 }
                 else if (isDownloadDoc(uriAuthority))
@@ -257,7 +310,7 @@ class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
                     val downloadUri = Uri.parse("content://downloads/public_downloads")
                     // Append download document id at uri end.
                     val downloadUriAppendId = ContentUris.withAppendedId(downloadUri, java.lang.Long.valueOf(documentId))
-                    ret = getImageRealPath(getContentResolver(), downloadUriAppendId, "")
+                    ret = getImageRealPath(contentResolver, downloadUriAppendId, "")
                 }
                 else if (isExternalStoreDoc(uriAuthority))
                 {
@@ -297,7 +350,7 @@ class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
         var ret = false
         if (uri != null)
         {
-            val uriSchema = uri.getScheme()
+            val uriSchema = uri.scheme
             if ("content".equals(uriSchema, ignoreCase = true))
             {
                 ret = true
@@ -349,17 +402,12 @@ class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
         val cursor = contentResolver.query(uri, null, whereClause, null, null)
         if (cursor != null)
         {
-            val moveToFirst = cursor.moveToFirst()
-            if (moveToFirst)
-            {
+            while (cursor.moveToFirst()) {
                 // Get columns name by uri type.
                 var columnName = MediaStore.Images.Media.DATA
-                if (uri === MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                {
+                if (uri === MediaStore.Images.Media.EXTERNAL_CONTENT_URI) {
                     columnName = MediaStore.Images.Media.DATA
-                }
-                else if (uri === MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
-                {
+                } else if (uri === MediaStore.Audio.Media.EXTERNAL_CONTENT_URI) {
                     columnName = MediaStore.Audio.Media.DATA
                 }
                 else if (uri === MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
@@ -370,6 +418,7 @@ class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
                 val imageColumnIndex = cursor.getColumnIndex(columnName)
                 // Get column value which is the uri related file local path.
                 ret = cursor.getString(imageColumnIndex)
+
             }
         }
         return ret
@@ -377,14 +426,53 @@ class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
 
     private fun isFileUri(uri:Uri):Boolean {
         var ret = false
-        if (uri != null)
-        {
-            val uriSchema = uri.getScheme()
-            if ("file".equals(uriSchema, ignoreCase = true))
-            {
+        if (uri != null) {
+            val uriSchema = uri.scheme
+            if ("file".equals(uriSchema, ignoreCase = true)) {
                 ret = true
             }
         }
         return ret
+    }
+
+
+    fun getRealPathFromURI(context: Context, contentUri: Uri?): String? {
+        var cursor: Cursor? = null
+        return try {
+            val proj =
+                arrayOf(MediaStore.Images.Media.DATA)
+            cursor = context.contentResolver.query(contentUri!!, proj, null, null, null)
+            val column_index: Int = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)!!
+            cursor.moveToFirst()
+            cursor.getString(column_index)
+        } finally {
+            if (cursor != null) {
+                cursor.close()
+            }
+        }
+    }
+
+
+    fun writeFile(n: InputStream, file: File) {
+        var out: OutputStream? = null
+        try {
+            out = FileOutputStream(file)
+            val buf = ByteArray(1024)
+            val len: Int = n.read(buf)
+            while (len > 0) {
+                out.write(buf, 0, len)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            try {
+                if (out != null) {
+                    out.close()
+                }
+                n.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
     }
 }

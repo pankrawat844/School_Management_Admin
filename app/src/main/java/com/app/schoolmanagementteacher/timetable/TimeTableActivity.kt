@@ -1,6 +1,8 @@
 package com.app.schoolmanagementteacher.timetable
 
+import android.app.Activity
 import android.content.*
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -15,18 +17,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toFile
 import androidx.lifecycle.ViewModelProviders
 import com.app.schoolmanagementteacher.R
-import com.app.schoolmanagementteacher.businfo.BusInfoListener
-import com.app.schoolmanagementteacher.businfo.BusInfoViewmodel
 import com.app.schoolmanagementteacher.response.Homework
 import com.app.schoolmanagementteacher.response.Timetable
 import com.app.schoolmanagementteacher.utils.Constants
 import com.app.schoolmanagementteacher.utils.hide
 import com.app.schoolmanagementteacher.utils.show
 import com.app.schoolmanagementteacher.utils.toast
+import com.jaiselrahman.filepicker.activity.FilePickerActivity
+import com.jaiselrahman.filepicker.config.Configurations
+import com.jaiselrahman.filepicker.model.MediaFile
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_time_table.*
-import kotlinx.android.synthetic.main.activity_time_table.menu
-import kotlinx.android.synthetic.main.activity_time_table.progress_bar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,24 +45,27 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
-import java.io.File
+import java.io.*
 
-class TimeTableActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
+class TimeTableActivity : AppCompatActivity(), KodeinAware, TimeTableListener,
     PhotoPickerFragment.Callback {
     lateinit var sharedPreferences: SharedPreferences
     override val kodein by kodein()
 
-    val factory: BusInfoViewmodelFactory by instance()
-    var viewmodel: BusInfoViewmodel? = null
+    val factory: TimeTableViewmodelFactory by instance()
+    var viewmodel: TimeTableViewmodel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_time_table)
 
-        viewmodel = ViewModelProviders.of(this, factory).get(BusInfoViewmodel::class.java)
+        viewmodel = ViewModelProviders.of(this, factory).get(TimeTableViewmodel::class.java)
         viewmodel?.timetableListener = this
-        sharedPreferences=getSharedPreferences("app", Context.MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("app", Context.MODE_PRIVATE)
 
-        viewmodel?.timetable(sharedPreferences?.getString("class_name","")!!,sharedPreferences?.getString("section_name","")!!)
+        viewmodel?.timetable(
+            sharedPreferences.getString("class_name", "")!!,
+            sharedPreferences.getString("section_name", "")!!
+        )
         image.setOnClickListener {
             PhotoPickerFragment.newInstance(
                 multiple = false,
@@ -68,16 +77,52 @@ class TimeTableActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
         }
 
         pdf.setOnClickListener {
-            Intent(Intent.ACTION_GET_CONTENT).also {
-                it.type = "application/pdf"
-                startActivityForResult(Intent.createChooser(it,"Select PDF"),0)
-            }
-            menu.close(true)
+            //            Intent(Intent.ACTION_GET_CONTENT).also {
+//                it.type = "application/pdf"
+//                startActivityForResult(Intent.createChooser(it,"Select PDF"),0)
+//            }
+            Dexter.withActivity(this).withPermissions(
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+                .withListener(object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        if (report?.areAllPermissionsGranted()!!) {
+                            Intent(this@TimeTableActivity, FilePickerActivity::class.java).also {
+                                it.putExtra(
+                                    FilePickerActivity.CONFIGS, Configurations.Builder()
+                                        .setCheckPermission(true)
+                                        .setShowImages(false)
+                                        .setShowVideos(false)
+                                        .enableImageCapture(false)
+                                        .setMaxSelection(1)
+                                        .setSuffixes("pdf")
+                                        .setShowFiles(true)
+                                        .setSkipZeroSizeFiles(true)
+                                        .build()
+                                )
+                                startActivityForResult(it, 0)
+                            }
+                            menu.close(true)
+                        } else {
+
+                        }
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
+
+                }).check()
+
 
         }
 
-        if (sharedPreferences.getString("role", "") == "incharge")
-            menu.visibility = View.VISIBLE
+//        if (sharedPreferences.getString("role", "") == "incharge")
+//            menu.visibility = View.VISIBLE
 
     }
 
@@ -160,24 +205,31 @@ class TimeTableActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode==0){
-            var path: RequestBody? = null
-            Log.e("TAG", "onActivityResult: "+getUriRealPath(this,data?.data!!) )
-            path = File(getUriRealPath(this,data?.data!!)).asRequestBody("multipart/form-data".toMediaTypeOrNull())
-            val body: MultipartBody.Part =
-                MultipartBody.Part.createFormData("fileToUpload", "xz", path)
-            val class_name: RequestBody =
-                sharedPreferences.getString(
-                    "class_name",
-                    ""
-                )!!.toRequestBody("text/plain".toMediaTypeOrNull())
-            val section_name: RequestBody =
-                sharedPreferences.getString(
-                    "section_name",
-                    ""
-                )!!.toRequestBody("text/plain".toMediaTypeOrNull())
-            CoroutineScope(Dispatchers.Main).launch {
-                viewmodel?.upload(class_name, section_name, body)
+        if(requestCode==0) {
+            if (resultCode == Activity.RESULT_OK) {
+                var path: RequestBody? = null
+                var files: ArrayList<MediaFile> =
+                    data?.getParcelableArrayListExtra(FilePickerActivity.MEDIA_FILES)!!
+
+                Log.e("TAG", "onActivityResult: " + files[0].uri.path)
+                Log.e("TAG", "onActivityResult: " + files[0].path)
+
+                path = File(files[0].path).asRequestBody("multipart/form-data".toMediaTypeOrNull())
+                val body: MultipartBody.Part =
+                    MultipartBody.Part.createFormData("fileToUpload", "xz", path)
+                val class_name: RequestBody =
+                    sharedPreferences.getString(
+                        "class_name",
+                        ""
+                    )!!.toRequestBody("text/plain".toMediaTypeOrNull())
+                val section_name: RequestBody =
+                    sharedPreferences.getString(
+                        "section_name",
+                        ""
+                    )!!.toRequestBody("text/plain".toMediaTypeOrNull())
+                CoroutineScope(Dispatchers.Main).launch {
+                    viewmodel?.upload(class_name, section_name, body)
+                }
             }
         }
     }
@@ -205,25 +257,22 @@ class TimeTableActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
         {
             if (isContentUri(uri))
             {
-                if (isGooglePhotoDoc(uri.getAuthority()!!))
-                {
-                    ret = uri.getLastPathSegment()!!
-                }
-                else
-                {
-                    ret = getImageRealPath(getContentResolver(), uri, "")
+                if (isGooglePhotoDoc(uri.authority!!)) {
+                    ret = uri.lastPathSegment!!
+                } else {
+                    ret = getImageRealPath(contentResolver, uri, "")
                 }
             }
             else if (isFileUri(uri))
             {
-                ret = uri.getPath()!!
+                ret = uri.path!!
             }
             else if (isDocumentUri(ctx, uri))
             {
                 // Get uri related document id.
                 val documentId = DocumentsContract.getDocumentId(uri)
                 // Get uri authority.
-                val uriAuthority = uri.getAuthority()
+                val uriAuthority = uri.authority
                 if (isMediaDoc(uriAuthority!!))
                 {
                     val idArr = documentId.split((":").toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
@@ -249,7 +298,7 @@ class TimeTableActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
                         }
                         // Get where clause with real document id.
                         val whereClause = MediaStore.Images.Media._ID + " = " + realDocId
-                        ret = getImageRealPath(getContentResolver(), mediaContentUri, whereClause)
+                        ret = getImageRealPath(contentResolver, mediaContentUri, whereClause)
                     }
                 }
                 else if (isDownloadDoc(uriAuthority))
@@ -258,7 +307,7 @@ class TimeTableActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
                     val downloadUri = Uri.parse("content://downloads/public_downloads")
                     // Append download document id at uri end.
                     val downloadUriAppendId = ContentUris.withAppendedId(downloadUri, java.lang.Long.valueOf(documentId))
-                    ret = getImageRealPath(getContentResolver(), downloadUriAppendId, "")
+                    ret = getImageRealPath(contentResolver, downloadUriAppendId, "")
                 }
                 else if (isExternalStoreDoc(uriAuthority))
                 {
@@ -298,7 +347,7 @@ class TimeTableActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
         var ret = false
         if (uri != null)
         {
-            val uriSchema = uri.getScheme()
+            val uriSchema = uri.scheme
             if ("content".equals(uriSchema, ignoreCase = true))
             {
                 ret = true
@@ -378,14 +427,52 @@ class TimeTableActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
 
     private fun isFileUri(uri:Uri):Boolean {
         var ret = false
-        if (uri != null)
-        {
-            val uriSchema = uri.getScheme()
-            if ("file".equals(uriSchema, ignoreCase = true))
-            {
+        if (uri != null) {
+            val uriSchema = uri.scheme
+            if ("file".equals(uriSchema, ignoreCase = true)) {
                 ret = true
             }
         }
         return ret
+    }
+
+    fun getRealPathFromURI(context: Context, contentUri: Uri?): String? {
+        var cursor: Cursor? = null
+        return try {
+            val proj =
+                arrayOf(MediaStore.Images.Media.DATA)
+            cursor = context.contentResolver.query(contentUri!!, proj, null, null, null)
+            val column_index: Int = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)!!
+            cursor.moveToFirst()
+            cursor.getString(column_index)
+        } finally {
+            if (cursor != null) {
+                cursor.close()
+            }
+        }
+    }
+
+
+    fun writeFile(n: InputStream, file: File) {
+        var out: OutputStream? = null
+        try {
+            out = FileOutputStream(file)
+            val buf = ByteArray(1024)
+            val len: Int = n.read(buf)
+            while (len > 0) {
+                out.write(buf, 0, len)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            try {
+                if (out != null) {
+                    out.close()
+                }
+                n.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
     }
 }

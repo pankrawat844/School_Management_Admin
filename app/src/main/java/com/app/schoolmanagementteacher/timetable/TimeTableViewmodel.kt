@@ -2,7 +2,6 @@ package com.app.schoolmanagementteacher.timetable
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.app.schoolmanagementteacher.businfo.BusInfoListener
 import com.app.schoolmanagementteacher.network.Repository
 import com.app.schoolmanagementteacher.response.Homework
 import com.app.schoolmanagementteacher.response.Timetable
