@@ -6,7 +6,6 @@ import com.app.schoolmanagementteacher.attendance.AttendenceViewmodelFactory
 import com.app.schoolmanagementteacher.businfo.BusInfoViewmodel
 import com.app.schoolmanagementteacher.feeinfo.FeeInfoViewmodel
 import com.app.schoolmanagementteacher.feeinfo.FeeInfoViewmodelFactory
-import com.app.schoolmanagementteacher.businfo.BusInfoViewmodel
 import com.app.schoolmanagementteacher.home.HomeViewModel
 import com.app.schoolmanagementteacher.home.HomeViewModelFactory
 import com.app.schoolmanagementteacher.homework.HomeworkViewmodel

@@ -5,9 +5,10 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.view.View
 import androidx.lifecycle.ViewModel
+import com.app.schoolmanagementteacher.WebviewActivity
 import com.app.schoolmanagementteacher.attendance.AttendenceActivity
 import com.app.schoolmanagementteacher.businfo.BusInfoActivity
-import com.app.schoolmanagementteacher.businfo.BusInfoActivity
+
 import com.app.schoolmanagementteacher.feeinfo.FeeInfoActivity
 import com.app.schoolmanagementteacher.homework.HomeworkActivity
 import com.app.schoolmanagementteacher.leave.LeaveActivity
@@ -62,9 +63,8 @@ class HomeViewModel(val adminRepository: Repository) : ViewModel() {
         }
     }
 
-    fun onBusInfoClick(view: View) {
 
-    fun onTimetableClick(view: View) {
+    fun onBusInfoClick(view: View) {
         Intent(view.context, BusInfoActivity::class.java).also {
             view.context.startActivity(it)
         }
@@ -84,6 +84,21 @@ class HomeViewModel(val adminRepository: Repository) : ViewModel() {
 
     fun onVideosClick(view: View) {
         Intent(view.context, VideosActivity::class.java).also {
+            view.context.startActivity(it)
+        }
+    }
+
+
+    fun onAboutUsClick(view: View) {
+        Intent(view.context, WebviewActivity::class.java).also {
+            it.putExtra("url", "https://www.ndpsedu.com/aboutus.aspx")
+            view.context.startActivity(it)
+        }
+    }
+
+    fun onContactUsClick(view: View) {
+        Intent(view.context, WebviewActivity::class.java).also {
+            it.putExtra("url", "https://www.ndpsedu.com/contactus.aspx")
             view.context.startActivity(it)
         }
     }
