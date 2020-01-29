@@ -430,6 +430,11 @@ class TimeTableActivity : AppCompatActivity(), KodeinAware, TimeTableListener,
         if (uri != null) {
             val uriSchema = uri.scheme
             if ("file".equals(uriSchema, ignoreCase = true)) {
+        if (uri != null)
+        {
+            val uriSchema = uri.scheme
+            if ("file".equals(uriSchema, ignoreCase = true))
+            {
                 ret = true
             }
         }

@@ -21,10 +21,7 @@ import com.app.schoolmanagementteacher.utils.toast
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
-import kotlinx.android.synthetic.main.activity_time_table.*
 import kotlinx.android.synthetic.main.activity_upcoming_test.*
-import kotlinx.android.synthetic.main.activity_upcoming_test.menu
-import kotlinx.android.synthetic.main.activity_upcoming_test.progress_bar
 import kotlinx.android.synthetic.main.bottomsheet_test.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,10 +53,11 @@ class UpcomingTest : AppCompatActivity(), KodeinAware, TestListener {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         menu.setOnClickListener {
             isupdateing = false
+            add_notice.text = "Add Test"
             if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN) {
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 name.setText("")
-                date.setText("")
+                date.text = ""
                 info.setText("")
             }
 
@@ -120,11 +118,11 @@ class UpcomingTest : AppCompatActivity(), KodeinAware, TestListener {
                         if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN) {
                             isupdateing = true
                             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                            add_notice.setText("Update Test")
-                            name.setText(list?.response?.get(position)?.testName!!)
-                            date.setText(list?.response?.get(position)?.date)
-                            info.setText(list?.response?.get(position)?.info)
-                            id.setText(list?.response?.get(position)?.id)
+                            add_notice.text = "Update Test"
+                            name.setText(list.response?.get(position)?.testName!!)
+                            date.text = list.response?.get(position)?.date
+                            info.setText(list.response?.get(position)?.info)
+                            id.text = list.response?.get(position)?.id
                         }
 
                     }
@@ -144,15 +142,15 @@ class UpcomingTest : AppCompatActivity(), KodeinAware, TestListener {
     }
 
     override fun onSuccess(data: Homework) {
-        toast(data?.response!!)
+        toast(data.response!!)
         finish()
     }
 
     override fun onAllTestSuccess(data: UpcomingTestList) {
         progress_bar.hide()
         list = data
-        Log.e("TAG", "onAllNoticeSuccess: " + data.response);
-        initRecyerview(data!!.response?.toNoticeItem()!!)
+        Log.e("TAG", "onAllNoticeSuccess: " + data.response)
+        initRecyerview(data.response?.toNoticeItem()!!)
     }
 
     private fun initRecyerview(toNoticeItem: List<UpcoingTestItem>) {

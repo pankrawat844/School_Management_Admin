@@ -16,6 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".WebviewActivity"></activity>
+        <activity android:name=".businfo.BusInfoActivity" />
         <activity android:name=".utils.FullScreenActivity"></activity>
         <activity android:name=".businfo.BusInfoActivity" />
         <activity android:name=".complaint.ComplaintActivity" />
@@ -51,6 +53,8 @@
         <activity android:name=".timetable.TimeTableActivity" />
         <activity android:name=".videos.VideosActivity" />
         <activity android:name=".videos.YoutubeDetailActivity" />
+        <activity android:name=".leave.LeaveActivity" />
+        <activity android:name=".feeinfo.FeeInfoActivity" />
     </application>
 
 </manifest>

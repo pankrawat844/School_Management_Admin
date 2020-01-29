@@ -4,10 +4,15 @@ import android.app.Application
 import com.app.schoolmanagementteacher.attendance.AttendenceViewmodel
 import com.app.schoolmanagementteacher.attendance.AttendenceViewmodelFactory
 import com.app.schoolmanagementteacher.businfo.BusInfoViewmodel
+import com.app.schoolmanagementteacher.feeinfo.FeeInfoViewmodel
+import com.app.schoolmanagementteacher.feeinfo.FeeInfoViewmodelFactory
+import com.app.schoolmanagementteacher.businfo.BusInfoViewmodel
 import com.app.schoolmanagementteacher.home.HomeViewModel
 import com.app.schoolmanagementteacher.home.HomeViewModelFactory
 import com.app.schoolmanagementteacher.homework.HomeworkViewmodel
 import com.app.schoolmanagementteacher.homework.HomeworkViewmodelFactory
+import com.app.schoolmanagementteacher.leave.LeaveViewmodel
+import com.app.schoolmanagementteacher.leave.LeaveViewmodelFactory
 import com.app.schoolmanagementteacher.login.LoginViewmodel
 import com.app.schoolmanagementteacher.login.LoginViewmodelFactory
 import com.app.schoolmanagementteacher.network.MyApi
@@ -67,6 +72,12 @@ class MainApplication:Application(),KodeinAware {
         bind() from singleton { YoutubeAPI() }
         bind() from singleton { YoutubeDetailViewModelFactory(instance()) }
         bind() from singleton { YoutubeDetailViewModel(instance()) }
+
+        bind() from singleton { LeaveViewmodel(instance()) }
+        bind() from singleton { LeaveViewmodelFactory(instance()) }
+
+        bind() from singleton { FeeInfoViewmodel(instance()) }
+        bind() from singleton { FeeInfoViewmodelFactory(instance()) }
     }
 
     override fun onCreate() {

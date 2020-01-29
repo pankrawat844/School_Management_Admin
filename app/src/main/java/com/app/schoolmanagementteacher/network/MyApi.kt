@@ -155,4 +155,37 @@ interface MyApi {
         @Field("class_name") class_name: String,
         @Field("section_name") notice: String
     ): Call<Timetable>
+
+
+    @Multipart
+    @POST("leave.php")
+    fun upload_leave(
+        @Part("class_name") class_name: RequestBody,
+        @Part("section_name") section_name: RequestBody,
+        @Part img: MultipartBody.Part,
+        @Part("type") type: Int = 1
+    ): Call<Homework>
+
+    @FormUrlEncoded
+    @POST("leave_detail.php")
+    fun get_leave(
+        @Field("class_name") class_name: String,
+        @Field("section_name") notice: String
+    ): Call<Timetable>
+
+    @Multipart
+    @POST("fee_info.php")
+    fun upload_feeInfo(
+        @Part("class_name") class_name: RequestBody,
+        @Part("section_name") section_name: RequestBody,
+        @Part img: MultipartBody.Part,
+        @Part("type") type: Int = 1
+    ): Call<Homework>
+
+    @FormUrlEncoded
+    @POST("fee_info_detail.php")
+    fun get_feeInfo(
+        @Field("class_name") class_name: String,
+        @Field("section_name") notice: String
+    ): Call<Timetable>
 }
