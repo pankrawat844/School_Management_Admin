@@ -24,8 +24,6 @@ import com.app.schoolmanagementteacher.utils.show
 import com.app.schoolmanagementteacher.utils.toast
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_time_table.*
-import kotlinx.android.synthetic.main.activity_time_table.menu
-import kotlinx.android.synthetic.main.activity_time_table.progress_bar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,10 +50,13 @@ class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
         setContentView(R.layout.activity_bus_info)
 
         viewmodel = ViewModelProviders.of(this, factory).get(BusInfoViewmodel::class.java)
-        viewmodel?.timetableListener = this
-        sharedPreferences=getSharedPreferences("app", Context.MODE_PRIVATE)
+        viewmodel?.businfoListener = this
+        sharedPreferences = getSharedPreferences("app", Context.MODE_PRIVATE)
 
-        viewmodel?.timetable(sharedPreferences?.getString("class_name","")!!,sharedPreferences?.getString("section_name","")!!)
+        viewmodel?.timetable(
+            sharedPreferences.getString("class_name", "")!!,
+            sharedPreferences.getString("section_name", "")!!
+        )
         image.setOnClickListener {
             PhotoPickerFragment.newInstance(
                 multiple = false,
@@ -162,7 +163,12 @@ class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
         if(requestCode==0){
             var path: RequestBody? = null
             Log.e("TAG", "onActivityResult: "+getUriRealPath(this,data?.data!!) )
-            path = File(getUriRealPath(this,data?.data!!)).asRequestBody("multipart/form-data".toMediaTypeOrNull())
+            path = File(
+                getUriRealPath(
+                    this,
+                    data.data!!
+                )
+            ).asRequestBody("multipart/form-data".toMediaTypeOrNull())
             val body: MultipartBody.Part =
                 MultipartBody.Part.createFormData("fileToUpload", "xz", path)
             val class_name: RequestBody =
@@ -204,25 +210,22 @@ class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
         {
             if (isContentUri(uri))
             {
-                if (isGooglePhotoDoc(uri.getAuthority()!!))
-                {
-                    ret = uri.getLastPathSegment()!!
-                }
-                else
-                {
-                    ret = getImageRealPath(getContentResolver(), uri, "")
+                if (isGooglePhotoDoc(uri.authority!!)) {
+                    ret = uri.lastPathSegment!!
+                } else {
+                    ret = getImageRealPath(contentResolver, uri, "")
                 }
             }
             else if (isFileUri(uri))
             {
-                ret = uri.getPath()!!
+                ret = uri.path!!
             }
             else if (isDocumentUri(ctx, uri))
             {
                 // Get uri related document id.
                 val documentId = DocumentsContract.getDocumentId(uri)
                 // Get uri authority.
-                val uriAuthority = uri.getAuthority()
+                val uriAuthority = uri.authority
                 if (isMediaDoc(uriAuthority!!))
                 {
                     val idArr = documentId.split((":").toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
@@ -248,7 +251,7 @@ class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
                         }
                         // Get where clause with real document id.
                         val whereClause = MediaStore.Images.Media._ID + " = " + realDocId
-                        ret = getImageRealPath(getContentResolver(), mediaContentUri, whereClause)
+                        ret = getImageRealPath(contentResolver, mediaContentUri, whereClause)
                     }
                 }
                 else if (isDownloadDoc(uriAuthority))
@@ -257,7 +260,7 @@ class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
                     val downloadUri = Uri.parse("content://downloads/public_downloads")
                     // Append download document id at uri end.
                     val downloadUriAppendId = ContentUris.withAppendedId(downloadUri, java.lang.Long.valueOf(documentId))
-                    ret = getImageRealPath(getContentResolver(), downloadUriAppendId, "")
+                    ret = getImageRealPath(contentResolver, downloadUriAppendId, "")
                 }
                 else if (isExternalStoreDoc(uriAuthority))
                 {
@@ -297,7 +300,7 @@ class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
         var ret = false
         if (uri != null)
         {
-            val uriSchema = uri.getScheme()
+            val uriSchema = uri.scheme
             if ("content".equals(uriSchema, ignoreCase = true))
             {
                 ret = true
@@ -379,7 +382,7 @@ class BusInfoActivity : AppCompatActivity(), KodeinAware, BusInfoListener,
         var ret = false
         if (uri != null)
         {
-            val uriSchema = uri.getScheme()
+            val uriSchema = uri.scheme
             if ("file".equals(uriSchema, ignoreCase = true))
             {
                 ret = true

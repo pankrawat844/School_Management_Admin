@@ -5,13 +5,14 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.view.View
 import androidx.lifecycle.ViewModel
-
 import com.app.schoolmanagementteacher.attendance.AttendenceActivity
+import com.app.schoolmanagementteacher.businfo.BusInfoActivity
+import com.app.schoolmanagementteacher.feeinfo.FeeInfoActivity
 import com.app.schoolmanagementteacher.homework.HomeworkActivity
+import com.app.schoolmanagementteacher.leave.LeaveActivity
 import com.app.schoolmanagementteacher.network.Repository
 import com.app.schoolmanagementteacher.notice.NoticeActivity
 import com.app.schoolmanagementteacher.response.Classes
-import com.app.schoolmanagementteacher.businfo.BusInfoActivity
 import com.app.schoolmanagementteacher.upcomingtest.UpcomingTest
 
 
@@ -46,13 +47,26 @@ class HomeViewModel(val adminRepository: Repository) : ViewModel() {
         }
     }
 
-    fun onUpcoingTestClick(view:View){
-        Intent(view.context,UpcomingTest::class.java).also {
+    fun onUpcoingTestClick(view: View) {
+        Intent(view.context, UpcomingTest::class.java).also {
             view.context.startActivity(it)
         }
     }
-    fun onTimetableClick(view:View){
+
+    fun onTimetableClick(view: View) {
         Intent(view.context, BusInfoActivity::class.java).also {
+            view.context.startActivity(it)
+        }
+    }
+
+    fun onLeaveClick(view: View) {
+        Intent(view.context, LeaveActivity::class.java).also {
+            view.context.startActivity(it)
+        }
+    }
+
+    fun onFeeInfoClick(view: View) {
+        Intent(view.context, FeeInfoActivity::class.java).also {
             view.context.startActivity(it)
         }
     }

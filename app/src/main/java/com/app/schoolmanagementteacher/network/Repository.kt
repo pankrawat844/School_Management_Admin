@@ -89,11 +89,41 @@ class Repository(val myApi: MyApi):SafeApiRequest() {
         return myApi.upload_timetable(class_id, section_name, img)
     }
 
-    suspend fun getTimetable(class_name: String,
-                             section_name: String):Call<Timetable>
-    {
-        return  myApi.get_timetable(class_name,section_name)
+    suspend fun getTimetable(
+        class_name: String,
+        section_name: String
+    ): Call<Timetable> {
+        return myApi.get_timetable(class_name, section_name)
     }
 
+    suspend fun uploadLeave(
+        @Part("class_name") class_id: RequestBody,
+        @Part("section_name") section_name: RequestBody,
+        img: MultipartBody.Part
+    ): Call<Homework> {
+        return myApi.upload_leave(class_id, section_name, img)
+    }
+
+    suspend fun getLeave(
+        class_name: String,
+        section_name: String
+    ): Call<Timetable> {
+        return myApi.get_leave(class_name, section_name)
+    }
+
+    suspend fun uploadFeeInfo(
+        @Part("class_name") class_id: RequestBody,
+        @Part("section_name") section_name: RequestBody,
+        img: MultipartBody.Part
+    ): Call<Homework> {
+        return myApi.upload_feeInfo(class_id, section_name, img)
+    }
+
+    suspend fun getFeeInfo(
+        class_name: String,
+        section_name: String
+    ): Call<Timetable> {
+        return myApi.get_feeInfo(class_name, section_name)
+    }
 
 }
