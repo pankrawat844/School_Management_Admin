@@ -29,6 +29,8 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.squareup.picasso.MemoryPolicy
+import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_time_table.*
 import kotlinx.coroutines.CoroutineScope
@@ -148,7 +150,9 @@ class TimeTableActivity : AppCompatActivity(), KodeinAware, TimeTableListener,
             pdfViewer.loadUrl("http://docs.google.com/gview?embedded=true&url=" + Constants.base_url + data.response.pdfPath)
             pdfViewer.visibility = View.VISIBLE
         } else if (data.response?.isPdf == "0") {
-            Picasso.get().load(Constants.base_url + data.response.imgPath).fit().into(imageView)
+            Picasso.get().load(Constants.base_url + data.response.imgPath).fit()
+                .networkPolicy(NetworkPolicy.NO_CACHE).memoryPolicy(MemoryPolicy.NO_CACHE)
+                .into(imageView)
             imageView.visibility = View.VISIBLE
         }
     }
