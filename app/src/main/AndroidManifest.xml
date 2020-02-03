@@ -19,7 +19,6 @@
         <activity android:name=".WebviewActivity"></activity>
         <activity android:name=".businfo.BusInfoActivity" />
         <activity android:name=".utils.FullScreenActivity"></activity>
-        <activity android:name=".businfo.BusInfoActivity" />
         <activity android:name=".complaint.ComplaintActivity" />
         <activity android:name=".upcomingtest.UpcomingTest" />
         <activity android:name=".attendance.StudentListActivity" />
@@ -41,7 +40,7 @@
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="com.app.schoolmanagementteacher.SplashActivity" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -55,6 +54,7 @@
         <activity android:name=".videos.YoutubeDetailActivity" />
         <activity android:name=".leave.LeaveActivity" />
         <activity android:name=".feeinfo.FeeInfoActivity" />
+        <activity android:name=".result.ResultActivity" />
     </application>
 
 </manifest>

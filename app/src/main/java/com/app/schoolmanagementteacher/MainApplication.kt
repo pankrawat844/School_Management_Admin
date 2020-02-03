@@ -21,6 +21,8 @@ import com.app.schoolmanagementteacher.network.YoutubeAPI
 import com.app.schoolmanagementteacher.notice.NoticeViewmodel
 import com.app.schoolmanagementteacher.notice.NoticeViewmodelFactory
 import com.app.schoolmanagementteacher.photopicker.loader.GlideImageLoader
+import com.app.schoolmanagementteacher.result.ResultViewmodel
+import com.app.schoolmanagementteacher.result.ResultmodelFactory
 import com.app.schoolmanagementteacher.timetable.BusInfoViewmodelFactory
 import com.app.schoolmanagementteacher.timetable.TimeTableViewmodel
 import com.app.schoolmanagementteacher.timetable.TimeTableViewmodelFactory
@@ -77,6 +79,9 @@ class MainApplication:Application(),KodeinAware {
 
         bind() from singleton { FeeInfoViewmodel(instance()) }
         bind() from singleton { FeeInfoViewmodelFactory(instance()) }
+
+        bind() from singleton { ResultViewmodel(instance()) }
+        bind() from singleton { ResultmodelFactory(instance()) }
     }
 
     override fun onCreate() {
