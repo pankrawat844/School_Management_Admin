@@ -22,8 +22,8 @@ import com.app.schoolmanagementteacher.utils.toast
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
-import kotlinx.android.synthetic.main.activity_upcoming_test.*
-import kotlinx.android.synthetic.main.bottomsheet_test.*
+import kotlinx.android.synthetic.main.activity_result.*
+import kotlinx.android.synthetic.main.bottomsheet_result.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,41 +50,35 @@ class ResultActivity : AppCompatActivity(), KodeinAware, ResultListener {
         viewmodel.testListener = this
         databinding.viewmodel = viewmodel
         viewmodel.allTest(sharedPreferences?.getString("id", "")!!)
-        val bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_test)
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_result)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        menu.setOnClickListener {
-            isupdateing = false
-            add_notice.text = "Add Test"
-            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN) {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                name.setText("")
-                date.text = ""
-                info.setText("")
-            }
 
-        }
+
+
+
+
         bottom_sheet_nxt.setOnClickListener {
             val name = name.text.toString().trim()
-            val info = info.text.toString().trim()
+            val max = max_marks.text.toString().trim()
             CoroutineScope(Dispatchers.Main).launch {
-                if (title.isNullOrBlank() || info.isNullOrBlank() || date.text.toString().isNullOrEmpty())
+                if (name.isNullOrBlank() || max.isNullOrBlank() || date.text.toString().isNullOrEmpty())
                     toast("All fields are mandatory.")
                 else {
-                    if (isupdateing)
-                        viewmodel.updateTest(
-                            id.text.toString(),
-                            name,
-                            date.text.toString(),
-                            info
-                        )
-                    else
-
-                        viewmodel.addTest(
-                            sharedPreferences?.getString("id", "")!!,
-                            name,
-                            date.text.toString(),
-                            info
-                        )
+//                    if (isupdateing)
+//                        viewmodel.updateTest(
+//                            id.text.toString(),
+//                            name,
+//                            date.text.toString(),
+//                            info
+//                        )
+//                    else
+//
+//                        viewmodel.addTest(
+//                            sharedPreferences?.getString("id", "")!!,
+//                            name,
+//                            date.text.toString(),
+//                            info
+//                        )
                 }
             }
         }
@@ -117,12 +111,10 @@ class ResultActivity : AppCompatActivity(), KodeinAware, ResultListener {
                     override fun onItemClick(view: View, position: Int) {
 
                         if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN) {
-                            isupdateing = true
                             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                            add_notice.text = "Update Test"
                             name.setText(list.response?.get(position)?.testName!!)
                             date.text = list.response?.get(position)?.date
-                            info.setText(list.response?.get(position)?.info)
+                            max_marks.setText(list.response?.get(position)?.info)
                             id.text = list.response?.get(position)?.id
                         }
 
