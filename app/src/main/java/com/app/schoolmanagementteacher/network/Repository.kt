@@ -28,15 +28,27 @@ class Repository(val myApi: MyApi):SafeApiRequest() {
         return  myApi.all_homework(incharge_id)
     }
 
-    suspend fun addNotice( incharge_id: String,
-                             title:String,
-                           notice:String):Call<Homework>
-    {
-        return  myApi.add_notice(incharge_id, title,notice)
+    suspend fun addNotice(incharge_id: String,
+                          title: String,
+                          notice: String
+    ): Call<Homework> {
+        return myApi.add_notice(incharge_id, title, notice)
     }
 
     suspend fun allNotice(incharge_id: String): Call<NoticeList> {
         return myApi.all_notice(incharge_id)
+    }
+
+    suspend fun addEvent(
+        incharge_id: String,
+        title: String,
+        notice: String
+    ): Call<Homework> {
+        return myApi.add_event(incharge_id, title, notice)
+    }
+
+    suspend fun allEvent(incharge_id: String): Call<NoticeList> {
+        return myApi.all_event(incharge_id)
     }
 
     suspend fun allStudent(class_name: String, section_name: String): Call<StudentList> {
@@ -47,7 +59,9 @@ class Repository(val myApi: MyApi):SafeApiRequest() {
         return myApi.all_test(incharge_id)
     }
 
-    suspend fun addTest( incharge_id: String,
+
+    suspend fun addTest(
+        incharge_id: String,
                          title:String,
                            date:String,
                          info:String):Call<Homework>
@@ -55,14 +69,27 @@ class Repository(val myApi: MyApi):SafeApiRequest() {
         return  myApi.add_test(incharge_id, title,date,info)
     }
 
+
     suspend fun updateTest(
-                        id:String,
-                        title:String,
-                         date:String,
-                         info:String):Call<Homework>
-    {
-        return  myApi.update_test(id, title,date,info)
+        id: String,
+        title: String,
+        date: String,
+        info: String
+    ): Call<Homework> {
+        return myApi.update_test(id, title, date, info)
     }
+
+    suspend fun addResult(
+        incharge_id: String,
+        test_id: String,
+        roll_no: String,
+        date: String,
+        max: String,
+        marks: String
+    ): Call<Homework> {
+        return myApi.add_result(incharge_id, test_id, roll_no, date, max, marks)
+    }
+
     suspend fun addAttendence(
         class_name: String,
         section_name: String,

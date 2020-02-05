@@ -63,24 +63,40 @@ interface MyApi {
     fun add_notice(
         @Field("incharge_id") incharge_id:String,
         @Field("title") title:String,
-        @Field("notice") notice:String
-    ):Call<Homework>
+        @Field("notice") notice: String
+    ): Call<Homework>
 
     @FormUrlEncoded
     @POST("notice_list.php")
     fun all_notice(
-        @Field("incharge_id") incharge_id:String
+        @Field("incharge_id") incharge_id: String
 
     ): Call<NoticeList>
 
     @FormUrlEncoded
+    @POST("add_event.php")
+    fun add_event(
+        @Field("incharge_id") incharge_id: String,
+        @Field("title") title: String,
+        @Field("notice") notice: String
+    ): Call<Homework>
+
+    @FormUrlEncoded
+    @POST("event_list.php")
+    fun all_event(
+        @Field("incharge_id") incharge_id: String
+
+    ): Call<NoticeList>
+
+
+    @FormUrlEncoded
     @POST("add_test.php")
     fun add_test(
-        @Field("incharge_id") incharge_id:String,
-        @Field("title") title:String,
-        @Field("date") date:String,
-        @Field("info") info:String
-    ):Call<Homework>
+        @Field("incharge_id") incharge_id: String,
+        @Field("title") title: String,
+        @Field("date") date: String,
+        @Field("info") info: String
+    ): Call<Homework>
 
     @FormUrlEncoded
     @POST("edit_test.php")
@@ -105,6 +121,18 @@ interface MyApi {
 
 
     ): Call<StudentList>
+
+    @FormUrlEncoded
+    @POST("add_result.php")
+    fun add_result(
+        @Field("incharge_id") incharge_id: String,
+        @Field("test_id") test_id: String,
+        @Field("roll_no") roll_no: String,
+        @Field("date") date: String,
+        @Field("max_mark") max: String,
+        @Field("mark_obtained") marks: String
+
+    ): Call<Homework>
 
     @FormUrlEncoded
     @POST("attendence.php")

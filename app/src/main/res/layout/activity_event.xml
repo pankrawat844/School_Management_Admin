@@ -7,7 +7,7 @@
 
         <variable
             name="viewmodel"
-            type="com.app.schoolmanagementteacher.result.ResultViewmodel" />
+            type="com.app.schoolmanagementteacher.event.EventViewmodel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -20,13 +20,24 @@
             tools:context=".notice.NoticeActivity">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/text_recyclerview"
+                android:id="@+id/notice_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="20dp"
+                android:src="@drawable/fab_add"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <ProgressBar
                 android:id="@+id/progress_bar"
@@ -39,6 +50,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <include layout="@layout/bottomsheet_result" />
+        <include layout="@layout/bottomsheet_notice" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

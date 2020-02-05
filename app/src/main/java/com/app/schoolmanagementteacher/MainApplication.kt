@@ -4,6 +4,8 @@ import android.app.Application
 import com.app.schoolmanagementteacher.attendance.AttendenceViewmodel
 import com.app.schoolmanagementteacher.attendance.AttendenceViewmodelFactory
 import com.app.schoolmanagementteacher.businfo.BusInfoViewmodel
+import com.app.schoolmanagementteacher.event.EventViewmodel
+import com.app.schoolmanagementteacher.event.EventViewmodelFactory
 import com.app.schoolmanagementteacher.feeinfo.FeeInfoViewmodel
 import com.app.schoolmanagementteacher.feeinfo.FeeInfoViewmodelFactory
 import com.app.schoolmanagementteacher.home.HomeViewModel
@@ -82,6 +84,10 @@ class MainApplication:Application(),KodeinAware {
 
         bind() from singleton { ResultViewmodel(instance()) }
         bind() from singleton { ResultmodelFactory(instance()) }
+
+        bind() from singleton { EventViewmodel(instance()) }
+        bind() from singleton { EventViewmodelFactory(instance()) }
+
     }
 
     override fun onCreate() {

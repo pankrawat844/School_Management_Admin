@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     app:behavior_hideable="true"
-    app:behavior_peekHeight="580dp"
+    app:behavior_peekHeight="600dp"
     app:layout_behavior="@string/bottom_sheet_behavior">
 
     <TextView
@@ -50,15 +50,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/filter">
 
-        <EditText
-            android:id="@+id/name"
+        <Spinner
+            android:id="@+id/roll_no"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/rect_filter"
             android:text="">
 
 
-        </EditText>
+        </Spinner>
     </LinearLayout>
 
     <TextView
@@ -120,6 +120,7 @@
         android:layout_marginRight="10dp"
         android:background="@drawable/rect_filter"
         android:text=""
+        android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/max_txt" />
@@ -146,6 +147,7 @@
         android:layout_marginRight="10dp"
         android:background="@drawable/rect_filter"
         android:text=""
+        android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mark_txt" />

@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.app.schoolmanagementteacher.WebviewActivity
 import com.app.schoolmanagementteacher.attendance.AttendenceActivity
 import com.app.schoolmanagementteacher.businfo.BusInfoActivity
+import com.app.schoolmanagementteacher.event.EventActivity
 
 import com.app.schoolmanagementteacher.feeinfo.FeeInfoActivity
 import com.app.schoolmanagementteacher.homework.HomeworkActivity
@@ -15,6 +16,7 @@ import com.app.schoolmanagementteacher.leave.LeaveActivity
 import com.app.schoolmanagementteacher.network.Repository
 import com.app.schoolmanagementteacher.notice.NoticeActivity
 import com.app.schoolmanagementteacher.response.Classes
+import com.app.schoolmanagementteacher.result.ResultActivity
 import com.app.schoolmanagementteacher.timetable.TimeTableActivity
 import com.app.schoolmanagementteacher.upcomingtest.UpcomingTest
 import com.app.schoolmanagementteacher.videos.VideosActivity
@@ -99,6 +101,18 @@ class HomeViewModel(val adminRepository: Repository) : ViewModel() {
     fun onContactUsClick(view: View) {
         Intent(view.context, WebviewActivity::class.java).also {
             it.putExtra("url", "https://www.ndpsedu.com/contactus.aspx")
+            view.context.startActivity(it)
+        }
+    }
+
+    fun onResultClick(view: View) {
+        Intent(view.context, ResultActivity::class.java).also {
+            view.context.startActivity(it)
+        }
+    }
+
+    fun onEventClick(view: View) {
+        Intent(view.context, EventActivity::class.java).also {
             view.context.startActivity(it)
         }
     }

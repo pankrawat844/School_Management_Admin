@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.schoolmanagementteacher.R
 import com.app.schoolmanagementteacher.databinding.ActivityResultBinding
 import com.app.schoolmanagementteacher.response.Homework
+import com.app.schoolmanagementteacher.response.StudentList
 import com.app.schoolmanagementteacher.response.UpcomingTestList
 import com.app.schoolmanagementteacher.upcomingtest.UpcoingTestItem
 import com.app.schoolmanagementteacher.utils.RecyclerItemClickListenr
@@ -39,17 +41,18 @@ class ResultActivity : AppCompatActivity(), KodeinAware, ResultListener {
     var sharedPreferences: SharedPreferences? = null
     lateinit var list: UpcomingTestList
     var isupdateing: Boolean = false
+    var viewmodel: ResultViewmodel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val databinding = DataBindingUtil.setContentView<ActivityResultBinding>(
             this,
             R.layout.activity_result
         )
-        val viewmodel = ViewModelProviders.of(this, factory).get(ResultViewmodel::class.java)
+        viewmodel = ViewModelProviders.of(this, factory).get(ResultViewmodel::class.java)
         sharedPreferences = getSharedPreferences("app", Context.MODE_PRIVATE)
-        viewmodel.testListener = this
+        viewmodel?.testListener = this
         databinding.viewmodel = viewmodel
-        viewmodel.allTest(sharedPreferences?.getString("id", "")!!)
+        viewmodel?.allTest(sharedPreferences?.getString("id", "")!!)
         val bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_result)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
@@ -58,27 +61,21 @@ class ResultActivity : AppCompatActivity(), KodeinAware, ResultListener {
 
 
         bottom_sheet_nxt.setOnClickListener {
-            val name = name.text.toString().trim()
+            val roll_no = roll_no.selectedItem.toString()
             val max = max_marks.text.toString().trim()
+            val marks = marks_obtained.text.toString().trim()
             CoroutineScope(Dispatchers.Main).launch {
-                if (name.isNullOrBlank() || max.isNullOrBlank() || date.text.toString().isNullOrEmpty())
+                if (max.isNullOrBlank() || date.text.toString().isNullOrEmpty() || marks.isNullOrEmpty())
                     toast("All fields are mandatory.")
                 else {
-//                    if (isupdateing)
-//                        viewmodel.updateTest(
-//                            id.text.toString(),
-//                            name,
-//                            date.text.toString(),
-//                            info
-//                        )
-//                    else
-//
-//                        viewmodel.addTest(
-//                            sharedPreferences?.getString("id", "")!!,
-//                            name,
-//                            date.text.toString(),
-//                            info
-//                        )
+                    viewmodel?.addResult(
+                        sharedPreferences?.getString("id", "")!!,
+                        id.text.toString(),
+                        roll_no,
+                        date.text.toString(),
+                        max,
+                        marks
+                    )
                 }
             }
         }
@@ -112,9 +109,8 @@ class ResultActivity : AppCompatActivity(), KodeinAware, ResultListener {
 
                         if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN) {
                             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                            name.setText(list.response?.get(position)?.testName!!)
+//                            name.setText(list.response?.get(position)?.testName!!)
                             date.text = list.response?.get(position)?.date
-                            max_marks.setText(list.response?.get(position)?.info)
                             id.text = list.response?.get(position)?.id
                         }
 
@@ -138,11 +134,31 @@ class ResultActivity : AppCompatActivity(), KodeinAware, ResultListener {
         finish()
     }
 
+    override fun onAllStudentSuccess(data: StudentList) {
+        progress_bar.hide()
+        roll_no.adapter = data.response?.toItem()?.let {
+            ArrayAdapter(
+                this, android.R.layout.simple_dropdown_item_1line,
+                it
+            )
+        }
+    }
+
+    private fun List<StudentList.Response>.toItem(): List<String> {
+        return this.map {
+            it.rollNo!!
+        }
+    }
+
     override fun onAllTestSuccess(data: UpcomingTestList) {
         progress_bar.hide()
         list = data
         Log.e("TAG", "onAllNoticeSuccess: " + data.response)
         initRecyerview(data.response?.toNoticeItem()!!)
+        viewmodel?.allstudent(
+            sharedPreferences?.getString("class_name", "")!!,
+            sharedPreferences?.getString("section_name", "")!!
+        )
     }
 
     private fun initRecyerview(toNoticeItem: List<UpcoingTestItem>) {
