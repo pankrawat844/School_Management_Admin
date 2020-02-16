@@ -7,7 +7,7 @@
 
         <variable
             name="viewmodel"
-            type="com.app.schoolmanagementteacher.result.ResultViewmodel" />
+            type="com.app.schoolmanagementadmin.ui.result.ResultViewmodel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -17,7 +17,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".notice.NoticeActivity">
+            tools:context=".ui.notice.NoticeActivity">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/text_recyclerview"

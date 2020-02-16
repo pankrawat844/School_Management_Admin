@@ -6,7 +6,7 @@
     android:background="@color/black"
     tools:context=".utils.FullScreenActivity">
 
-    <com.app.schoolmanagementteacher.utils.TouchImageView
+    <com.app.schoolmanagementadmin.utils.TouchImageView
         android:id="@+id/img"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

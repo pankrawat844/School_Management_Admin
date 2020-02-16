@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.app.schoolmanagementteacher">
+    package="com.app.schoolmanagementadmin">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".MainApplication"
+        android:name="com.app.schoolmanagementadmin.MainApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -16,13 +16,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".WebviewActivity"></activity>
-        <activity android:name=".businfo.BusInfoActivity" />
-        <activity android:name=".utils.FullScreenActivity"></activity>
-        <activity android:name=".complaint.ComplaintActivity" />
-        <activity android:name=".upcomingtest.UpcomingTest" />
-        <activity android:name=".attendance.StudentListActivity" />
-        <activity android:name=".notice.NoticeActivity" />
+        <activity android:name="com.app.schoolmanagementadmin.WebviewActivity"></activity>
+        <activity android:name="com.app.schoolmanagementadmin.ui.businfo.BusInfoActivity" />
+        <activity android:name="com.app.schoolmanagementadmin.utils.FullScreenActivity"></activity>
+        <activity android:name="com.app.schoolmanagementadmin.ui.complaint.ComplaintActivity" />
+        <activity android:name="com.app.schoolmanagementadmin.upcomingtest.UpcomingTest" />
+        <activity android:name="com.app.schoolmanagementadmin.ui.attendance.StudentListActivity" />
+        <activity android:name="com.app.schoolmanagementadmin.ui.notice.NoticeActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -34,28 +34,28 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".attendance.AttendenceActivity" />
-        <activity android:name=".homework.HomeworkActivity" />
-        <activity android:name=".login.LoginActivity" />
-        <activity android:name=".SplashActivity">
+        <activity android:name="com.app.schoolmanagementadmin.ui.attendance.AttendenceActivity" />
+        <activity android:name="com.app.schoolmanagementadmin.ui.homework.HomeworkActivity" />
+        <activity android:name="com.app.schoolmanagementadmin.ui.login.LoginActivity" />
+        <activity android:name="com.app.schoolmanagementadmin.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="com.app.schoolmanagementteacher.SplashActivity" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".HomeActivity" />
+        <activity android:name="com.app.schoolmanagementadmin.HomeActivity" />
         <activity
             android:name="lv.chi.photopicker.utils.CameraActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".timetable.TimeTableActivity" />
-        <activity android:name=".videos.VideosActivity" />
-        <activity android:name=".videos.YoutubeDetailActivity" />
-        <activity android:name=".leave.LeaveActivity" />
-        <activity android:name=".feeinfo.FeeInfoActivity" />
-        <activity android:name=".result.ResultActivity" />
-        <activity android:name=".event.EventActivity" />
+        <activity android:name="com.app.schoolmanagementadmin.ui.timetable.TimeTableActivity" />
+        <activity android:name="com.app.schoolmanagementadmin.videos.VideosActivity" />
+        <activity android:name="com.app.schoolmanagementadmin.videos.YoutubeDetailActivity" />
+        <activity android:name="com.app.schoolmanagementadmin.ui.leave.LeaveActivity" />
+        <activity android:name="com.app.schoolmanagementadmin.ui.feeinfo.FeeInfoActivity" />
+        <activity android:name="com.app.schoolmanagementadmin.ui.result.ResultActivity" />
+        <activity android:name="com.app.schoolmanagementadmin.ui.event.EventActivity" />
     </application>
 
 </manifest>

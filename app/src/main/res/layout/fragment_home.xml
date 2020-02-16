@@ -6,7 +6,7 @@
 
         <variable
             name="viewmodel"
-            type="com.app.schoolmanagementteacher.home.HomeViewModel" />
+            type="com.app.schoolmanagementadmin.home.HomeViewModel" />
     </data>
 <ScrollView
     android:layout_width="match_parent"

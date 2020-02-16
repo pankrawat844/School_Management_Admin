@@ -5,7 +5,7 @@
     xmlns:fab="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".businfo.BusInfoActivity">
+    tools:context=".ui.businfo.BusInfoActivity">
 
     <ImageView
         android:id="@+id/imageView"
@@ -26,7 +26,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="20dp"
-        android:visibility="gone"
         >
 
         <com.github.clans.fab.FloatingActionButton

@@ -5,7 +5,7 @@
 
         <variable
             name="viewmodel"
-            type="com.app.schoolmanagementteacher.response.YoutubeVideo.Item" />
+            type="com.app.schoolmanagementadmin.response.YoutubeVideo.Item" />
 
         <variable
             name="glide"

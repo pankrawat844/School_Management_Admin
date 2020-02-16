@@ -4,7 +4,7 @@
 
         <variable
             name="data"
-            type="com.app.schoolmanagementteacher.login.LoginViewmodel" />
+            type="com.app.schoolmanagementadmin.login.LoginViewmodel" />
     </data>
 
     <RelativeLayout
